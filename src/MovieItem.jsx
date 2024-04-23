@@ -6,7 +6,7 @@ export default function MovieItem({items,index,ratingsData})
 
     const handleMovDetails = (id) =>
     {
-        navigate("/mmdb/"+id);
+        navigate("/"+id);
     }
 
     const index2 = ratingsData.findIndex(x=>
@@ -26,7 +26,7 @@ export default function MovieItem({items,index,ratingsData})
               <img src={`https://image.tmdb.org/t/p/w500${items.poster_path}`} alt={items.original_title} />
               <div className="movie-title">{items.original_title}</div>
               <div className="movie-release-date">{items.release_date}</div>
-              <div>MMDB Rating : {movieRatings}</div>
+              <div>MMDB Rating ⭐️ : {movieRatings}</div>
             </div>
     )
 }
