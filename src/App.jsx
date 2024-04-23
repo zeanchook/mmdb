@@ -12,7 +12,7 @@ import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function App() {
-f
+
   const [ratingsData, setRatingsData] = useState([]);
 
   const [search,setSearch] = useState("");
@@ -108,7 +108,7 @@ f
   {
     async function createRatings(fields) {
       console.log("inside",fields)
-    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/`;
+    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings/`;
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
       'Authorization': `Bearer ${authToken}`,
@@ -138,7 +138,7 @@ f
 
   async function updateRatings(x) {
     // console.log("inside",x)
-  const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/${x.id}`;
+  const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings/${x.id}`;
   const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
   const headers = {
     'Authorization': `Bearer ${authToken}`,
@@ -183,7 +183,7 @@ f
   // ! get first data airtable for Recent Search
   useEffect(() => {
     async function mmdbRatingstable() {
-      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings";
+      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings";
       const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
       const headers = {
         'Authorization': `Bearer ${authToken}`,
@@ -266,7 +266,7 @@ updateRecentSearch(searchString)
 // get first data airtable for Recent Search
 useEffect(() => {
   async function recentSearchTable() {
-    const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/RecentSearch";
+    const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyY/RecentSearch";
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
       'Authorization': `Bearer ${authToken}`,
