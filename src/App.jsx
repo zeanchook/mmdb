@@ -136,7 +136,7 @@ function App() {
     <>
 
     <Routes>
-          <Route path="/mmdb" element={<Test ratingsData={ratingsData}/>} />
+          <Route path="/" element={<Test ratingsData={ratingsData}/>} />
           <Route path="/mmdb/:id" element={<MovieDetails handleRatings={handleRatings}/>} />
           {/* <Route path="/holidays/:holidayId" element={<HolidayPage />} />
           <Route path="/holidays/edit" element={<EditHolidayPage />} /> */}
