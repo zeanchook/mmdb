@@ -12,7 +12,7 @@ import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function App() {
-
+f
   const [ratingsData, setRatingsData] = useState([]);
 
   const [search,setSearch] = useState("");
