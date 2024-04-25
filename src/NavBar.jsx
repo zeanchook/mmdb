@@ -3,9 +3,9 @@ import { Link} from "react-router-dom";
 
 export default function NavBar({handleSearch,setSearch,searchString,handlePress})
 {
-    return(<div class="topnav">
-    <Link to="/"><h1>m</h1></Link> |
-    <a><SearchBar handleSearch={handleSearch} setSearch={setSearch} 
-        searchString={searchString} handlePress={handlePress}/></a>
+    return(<div className="topnav">
+    <Link to="/"><h1>My Movie Database MMDB</h1></Link> 
+    <SearchBar handleSearch={handleSearch} setSearch={setSearch} 
+        searchString={searchString} handlePress={handlePress}/>
     </div>)
 }

@@ -25,9 +25,18 @@ function App() {
   const [recentSearch, setRecentSearch] = useState([]);
 
  const navigate = useNavigate();
-  console.log(ratingsData)
+  // console.log(ratingsData)
+  
   const handleFavourite =(items) =>
   {
+    // console.log(items.genres)
+    const getGenre = items.genres.map(items => items.id).join(",")
+
+    const tets =  items.genres.map(items => [items.name, items.id]).join(",")
+
+    console.log(tets)
+      
+    // console.log(getGenre)
     let newData = ratingsData
     let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === items.id)
     console.log(finder)
@@ -51,7 +60,7 @@ function App() {
           MovieID: items.id,
           Rating: newData[finder].fields.Rating, ratingsChanged,
           backgroundImage: items.poster, 
-          Favourite: favourite, favouriteChanged}},
+          Favourite: favourite, favouriteChanged,Genre: getGenre}},
         ...newData.slice(0, finder),
         ...newData.slice(finder + 1)]
         console.log(newData2)
@@ -61,8 +70,8 @@ function App() {
       let newdata3 = [
       {id: "new",
       createdTime: "newtime", fields:{MovieName: items.title,
-      MovieID: items.id,Rating: "", ratingsChanged,
-      backgroundImage: items.poster_path, Favourite: "no"}},
+      MovieID: items.id,Rating: "-", ratingsChanged,
+      backgroundImage: items.poster_path, Favourite: "no",Genre: getGenre}},
     ...newData]
     setRatingsData(newdata3)
     }
@@ -70,6 +79,7 @@ function App() {
 
   const handleRatings = (returnRatings,movDetails) =>
   {
+    const getGenre = movDetails.genres.map(items => items.id).join(",")
     let newData = ratingsData
     let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === movDetails.id)
     let ratingsChanged = {change: "no"}
@@ -83,10 +93,10 @@ function App() {
       createdTime: newData[finder].createdTime, 
       fields:{MovieName: movDetails.title,
         MovieID: movDetails.id,Rating: returnRatings, 
-        ratingsChanged,backgroundImage: movDetails.poster_path}},
+        ratingsChanged,backgroundImage: movDetails.poster_path,Genre: getGenre}},
       ...newData.slice(0, finder),
       ...newData.slice(finder + 1)]
-      console.log(newData2)
+      // console.log(newData2)
       setRatingsData(newData2)
     }
     else{
@@ -97,7 +107,7 @@ function App() {
         MovieID: movDetails.id,
         Rating: returnRatings, ratingsChanged,
         backgroundImage: movDetails.poster_path, 
-        Favourite: "no"}},
+        Favourite: "no",Genre: getGenre}},
     ...newData]
     setRatingsData(newdata3)
     }
@@ -107,8 +117,8 @@ function App() {
   const updateRating = () =>
   {
     async function createRatings(fields) {
-      console.log("inside",fields)
-    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings/`;
+    console.log("inside",fields?.Rating)
+    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/`;
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
       'Authorization': `Bearer ${authToken}`,
@@ -121,7 +131,8 @@ function App() {
       MovieID: JSON.stringify(fields?.MovieID),
       Rating: fields?.Rating,
       backgroundImage: fields?.backgroundImage,
-      Favourite: fields?.Favourite
+      Favourite: fields?.Favourite,
+      Genre: fields?.Genre
       }
     };
     const response = await fetch(url, {
@@ -129,7 +140,7 @@ function App() {
             headers: headers,
             body: JSON.stringify(data),})
     const myRatings = await response.json();
-    // console.log("thisone !!!!:",myRatings)
+    console.log("thisone !!!!:",myRatings)
 
     let finder = ratingsData.findIndex(x => parseInt(x.fields.MovieID) === parseInt(myRatings.fields.MovieID))
     setRatingsData([{...myRatings}, ...ratingsData.slice(0, finder), ...ratingsData.slice(finder + 1)])
@@ -138,7 +149,7 @@ function App() {
 
   async function updateRatings(x) {
     // console.log("inside",x)
-  const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings/${x.id}`;
+  const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/${x.id}`;
   const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
   const headers = {
     'Authorization': `Bearer ${authToken}`,
@@ -183,7 +194,7 @@ function App() {
   // ! get first data airtable for Recent Search
   useEffect(() => {
     async function mmdbRatingstable() {
-      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyY/Top%20MMDB%20Ratings";
+      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings";
       const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
       const headers = {
         'Authorization': `Bearer ${authToken}`,
@@ -266,7 +277,7 @@ updateRecentSearch(searchString)
 // get first data airtable for Recent Search
 useEffect(() => {
   async function recentSearchTable() {
-    const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyY/RecentSearch";
+    const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/RecentSearch";
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
       'Authorization': `Bearer ${authToken}`,
@@ -284,7 +295,6 @@ useEffect(() => {
 
 const resultsArr = searchResults?.results?.map((items,index)=>
 {
-      
     return (<MovieItem items={items} index={index} key={index} ratingsData={ratingsData}/>);
 })
 

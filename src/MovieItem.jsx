@@ -13,12 +13,10 @@ export default function MovieItem({items,index,ratingsData})
             parseInt(x.fields.MovieID) === items.id
         )
 
-    console.log(index2)
-    let movieRatings = "Not Rated"
+    let movieRatings = ""
     if (index2 !== -1)
     {
-        // console.log(ratingsData[index2].fields.Rating)
-        movieRatings = ratingsData[index2].fields.Rating
+        movieRatings = "⭐️ :" + ratingsData[index2].fields.Rating
     }
 
     return(
@@ -26,7 +24,7 @@ export default function MovieItem({items,index,ratingsData})
               <img src={`https://image.tmdb.org/t/p/w500${items.poster_path}`} alt={items.original_title} />
               <div className="movie-title">{items.original_title}</div>
               <div className="movie-release-date">{items.release_date}</div>
-              <div>MMDB Rating ⭐️ : {movieRatings}</div>
+              <div >{movieRatings}</div>
             </div>
     )
 }

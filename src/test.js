@@ -150,10 +150,31 @@
 
 // console.log("after",test3);
 
-let ob1 = [{fields:{
-                "Name": "1",
-                "SearchName": "my%20name"
-            }}]
-let ob2 = [...ob1,ob1[0].fields.Name = 2]
-console.log(ob2.slice(0))
+// let ob1 = [{fields:{
+//                 "Name": "1",
+//                 "SearchName": "my%20name"
+//             }}]
+// let ob2 = [...ob1,ob1[0].fields.Name = 2]
+// console.log(ob2.slice(0))
 
+
+let obj1 = [
+    "Animation,Romance,Drama",
+    "Science Fiction,Action,Adventure",
+    "Adventure,Action,Science Fiction"
+]
+let ob2 = obj1.join(",").split(",")
+
+let ob3 = [];
+
+ob2.forEach(x => {
+    let existingItem = ob3.find(item => item === x);
+    if (existingItem) {
+        existingItem.x++;
+    } else {
+        ob3.push({x: 1 });
+    }
+});
+
+
+    console.log(ob3)

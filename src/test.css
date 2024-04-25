@@ -1,6 +1,7 @@
 .app-container {
     font-family: Arial, sans-serif;
     padding: 20px;
+    
   }
   
   .movie-poster-container {
@@ -9,6 +10,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* top: 200px;
+    position: relative; */
   }
   
   .movie-title {
@@ -44,8 +47,14 @@
 
   /* Add a black background color to the top navigation */
 .topnav {
-  background-color: #333;
+  background-color: #0c0c0c;
+  /* position: absolute;
+  top: 0px; */
+  width: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
 }
 
 /* Style the links inside the navigation bar */
@@ -55,7 +64,7 @@
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 10px;
 }
 
 /* Change the color of links on hover */

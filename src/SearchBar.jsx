@@ -34,9 +34,9 @@ export default function({ setSearch,handleSearch,searchString,handlePress })
         console.log("no run?",searchString)
     }, [searchString]);
     return(
-        <>
+        <div>
         <input type="text" id="search" placeholder="Search for a movie" onChange={handleChange}/>
-        <button onClick={handleSearch}>Search</button></>
+        <button onClick={handleSearch}>Search</button></div>
     )
 
 }

@@ -70,10 +70,10 @@ export default function RecentSearch({recentSearch})
 
 
 // eslint-disable-next-line react/prop-types
-const recentSearchBarDisplay = recentSearch.map(x=>
+const recentSearchBarDisplay = recentSearch.map((x,idx)=>
   {
     // eslint-disable-next-line react/jsx-key
-    return(<div className="recent-search-bar">{x?.fields?.SearchName?.replace("%20"," ")}</div>)
+    return(<div key={idx} className="recent-search-bar">{x?.fields?.SearchName?.replace("%20"," ")} </div>)
   })
 
   // console.log(recentSearchBarDisplay)
