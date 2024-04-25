@@ -3,7 +3,9 @@ import { useState,useEffect } from 'react'
 import MainPage from "./MainPage"
 import MovieDetails from "./MovieDetails"
 
+import TopRatedTab from "./TopRatedTab"
 
+import Favourite from "./Favourite"
 import MovieItem from "./MovieItem"
 import NavBar from "./NavBar"
 import './test.css'
@@ -114,10 +116,66 @@ function App() {
     
   }
 
+  const handleWishList = (items) =>
+  {
+    console.log(items)
+
+    // console.log(items.genres)
+    const getGenre = items.genres.map(items => items.id).join(",")
+
+    const tets =  items.genres.map(items => [items.name, items.id]).join(",")
+
+    // console.log(tets)
+      
+    // console.log(getGenre)
+    let newData = ratingsData
+    let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === items.id)
+    console.log(finder)
+    let ratingsChanged = {change: "no"}
+    let favouriteChanged = {change: "no"}
+    let wishlistChanged = {change: "no"}
+    let favourite = "no" ;
+    let wishlist = "";
+
+
+    if(finder !== -1)
+    {
+      ratingsData[finder].fields?.Favourite === "no" ? favourite = "yes" : favourite
+      ratingsData[finder].fields?.Wishlist === "yes" ? wishlist = "no" : wishlist
+
+      wishlistChanged = {change: "yes"}
+      console.log(favourite)
+
+      let newData2 = [
+        {id: newData[finder].id,
+        createdTime: newData[finder].createdTime, 
+        fields:{
+          MovieName: items.title,
+          MovieID: items.id,
+          Rating: newData[finder].fields.Rating, ratingsChanged,
+          backgroundImage: items.poster, 
+          Favourite: favourite, favouriteChanged,Genre: getGenre, Wishlist: "",wishlistChanged}},
+        ...newData.slice(0, finder),
+        ...newData.slice(finder + 1)]
+        console.log(newData2)
+        setRatingsData(newData2)
+    }
+    else{
+      let newdata3 = [
+      {id: "new",
+      createdTime: "newtime", fields:{MovieName: items.title,
+      MovieID: items.id,Rating: "-", ratingsChanged,
+      backgroundImage: items.poster_path, Favourite: "no",Genre: getGenre, WishList: "yes"}},
+    ...newData]
+    console.log(newdata3)
+    setRatingsData(newdata3)
+    }
+  }
+
   const updateRating = () =>
   {
     async function createRatings(fields) {
-    console.log("inside",fields?.Rating)
+    console.log("inside",fields)
     const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/`;
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
@@ -132,7 +190,8 @@ function App() {
       Rating: fields?.Rating,
       backgroundImage: fields?.backgroundImage,
       Favourite: fields?.Favourite,
-      Genre: fields?.Genre
+      Genre: fields?.Genre,
+      WishList: fields?.WishList
       }
     };
     const response = await fetch(url, {
@@ -159,7 +218,8 @@ function App() {
     fields:
     {
     Rating: x.fields?.Rating,
-    Favourite: x.fields?.Favourite
+    Favourite: x.fields?.Favourite,
+    Wishlist: x.fields?.WishList
     }
   };
   const response = await fetch(url, {
@@ -183,6 +243,11 @@ function App() {
             // console.log(x)
       }
       else if(x.fields.favouriteChanged?.change === "yes")
+      {
+            updateRatings(x)
+            // console.log(x)
+      }
+      else if(x.fields.wishlistChanged?.change === "yes")
       {
             updateRatings(x)
             // console.log(x)
@@ -305,7 +370,9 @@ const resultsArr = searchResults?.results?.map((items,index)=>
 
     <Routes>
           <Route path="/" element={<MainPage ratingsData={ratingsData} resultsArr={resultsArr} recentSearch={recentSearch}/>} />
-          <Route path="/:id" element={<MovieDetails handleRatings={handleRatings} handleFavourite={handleFavourite}/>} />
+          <Route path="/toprated" element={<TopRatedTab ratingsData={ratingsData}/>} />
+          <Route path="/favourite" element={<Favourite ratingsData={ratingsData}/>} />
+          <Route path="/:id" element={<MovieDetails handleRatings={handleRatings} handleFavourite={handleFavourite} handleWishList={handleWishList}/>} />
     </Routes>
     </>
   )

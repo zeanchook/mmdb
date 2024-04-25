@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-export default function MovieDetails({handleRatings,handleFavourite})
+export default function MovieDetails({handleRatings,handleFavourite,handleWishList})
 {
     const { id } = useParams();
 
@@ -43,6 +43,11 @@ export default function MovieDetails({handleRatings,handleFavourite})
         handleFavourite(movieDetails)
     }
 
+    const handleWishListClick = () =>
+    {
+        handleWishList(movieDetails)
+    }
+
     useEffect(() => {
         async function getMovDetails() {
             const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US?&api_key=36d3acba2fb699efb449a8d506e9430a`;
@@ -51,8 +56,6 @@ export default function MovieDetails({handleRatings,handleFavourite})
             setMovieDetails(myResults)
           }
 
-          
-      
     getMovDetails()
           
         }, [id]);
@@ -63,6 +66,9 @@ export default function MovieDetails({handleRatings,handleFavourite})
             const url = `https://api.themoviedb.org/3/movie/${id}/watch/providers?&api_key=36d3acba2fb699efb449a8d506e9430a`;
             const response = await fetch(url)
             const myResults = await response.json();
+
+            // console.log("this!!!:",myResults.result)
+
             setProviders(myResults)
             }
         
@@ -70,9 +76,11 @@ export default function MovieDetails({handleRatings,handleFavourite})
               
             }, [id]);
 
-        console.log(movieDetails.imdb_id)
-        console.log("providers",providersList.results)
+        // console.log("providers",providersList.results)
+
         let providersRegions = []
+
+
         for(let x in providersList.results)
         {
             providersRegions.push(x)
@@ -85,8 +93,24 @@ export default function MovieDetails({handleRatings,handleFavourite})
 
         // ! provider
 
-        console.log(regionList)
-        console.log(providersRegions)
+
+        const selectorBox = () =>
+        {
+            if (regionList.length !== 0)
+            {
+            return (<><label htmlFor="regionlist-choice">Check Provider:</label>
+            <input placeholder="Select region" list="regionlist" id="regionlist-choice" name="regionlist-choice" onChange={handleRegChange}/>
+            <datalist id="regionlist">
+                {regionList}
+            </datalist></>)
+            }
+            else 
+            {
+                return <div>No provider at the moment <button onClick={handleWishListClick}>Wishlist ?</button></div>
+            }
+        }
+        
+        // console.log(providersRegions)
 
         const handleRegChange = (event) =>
         {
@@ -99,17 +123,31 @@ export default function MovieDetails({handleRatings,handleFavourite})
             
         }
 
-        console.log(providerSelected)
+        // console.log(providerSelected)
         // console.log(providersList?.results[providerSelected])
 
-        const providerBar = providerSelected.flatrate?.map(x => 
+        const providerBarWatch = providerSelected.flatrate?.map((x,idx) => 
         {
             return (
-                <div>
+                <div key={idx}>
                     <img src={`https://image.tmdb.org/t/p/original/${x.logo_path}`}/>
+                    <p>{x.provider_name}</p>
                 </div>
             )
         })
+
+        const providerBarBuy = providerSelected.buy?.map((x,idx) => 
+        {
+                return (
+                <div key={idx}>
+                    <img src={`https://image.tmdb.org/t/p/original/${x.logo_path}`}/>
+                    <caption>{x.provider_name}</caption>
+                </div>
+            )
+        })
+
+        // const providerBarBuyDis = (providerBarBuy.length !== undefined && providerBarBuy)
+        // console.log(providerBarBuyDis)
 
         // console.log(providerBar)
 
@@ -195,17 +233,8 @@ export default function MovieDetails({handleRatings,handleFavourite})
     <div>MMDB Ratings: ⭐️{ratings()}</div><button onClick={handleClick}>Vote</button>
     <div><button onClick={handleFavouriteClick}>Favourite</button></div>
     <button onClick={handleBack}>back</button>
-
-        <label htmlFor="regionlist-choice">Check Provider:</label>
-        <input placeholder="Select region" list="regionlist" id="regionlist-choice" name="regionlist-choice" onChange={handleRegChange}/>
-        <datalist id="regionlist">
-            {regionList}
-        </datalist>
-
-    <div>{providerBar}</div>
-
-        
-
-
+    {selectorBox()}
+    {providerBarWatch && <div style={{display:"flex"}}>Watch at: {providerBarWatch}</div>}
+    {providerBarBuy && <div style={{display:"flex"}}>Buy at: {providerBarBuy}</div>}
     </>)
 }

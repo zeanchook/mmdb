@@ -14,6 +14,7 @@ export default function TopMMDBRatings({ratingsData})
         {
             return <div key={idx} className="movie-poster-container"><img src={`https://image.tmdb.org/t/p/w500${x.fields.backgroundImage}`} ></img><a>MMDB: {x.fields.Rating}</a></div>
         })
+    
     console.log(topMMDBRatings.length)
     return((topMMDBRatings.length !== 0) &&
         <div style={{display:"flex",width:"50%"}}>MMDB Top Rated:
