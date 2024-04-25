@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 
+import { useContext } from "react";
+import { DataContext } from "./App";
+
 export default function GenreRec({genreRecommendation,getRecGenre}){
 
     const [genreData, setGenreData] = useState("")
+
+    const contextPassed = useContext(DataContext);
+
 
     useEffect(() => {
         let ignore = false;
     async function fetchData()
     {
         const results = await genreRecommendation();
-        // console.log(results)
         if(!ignore)
         {
         setGenreData(results)
@@ -28,7 +33,7 @@ export default function GenreRec({genreRecommendation,getRecGenre}){
 
             let randomIdx = Math.floor(Math.random() * resultLength);
 
-            return (<div key={idx} className="movie-poster-container">
+            return (<div key={idx} className="movie-poster-container" onClick={() => contextPassed[0](genreData[0].results[randomIdx].id)}>
 
             <img src={`https://image.tmdb.org/t/p/w500${genreData[0].results[randomIdx].poster_path}`} ></img></div>)
         })

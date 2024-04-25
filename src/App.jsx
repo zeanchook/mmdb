@@ -1,10 +1,18 @@
 import { useState,useEffect } from 'react'
+
+import { createContext } from "react";
+export const DataContext = createContext();
+
 // import './App.css'
 import MainPage from "./MainPage"
 import MovieDetails from "./MovieDetails"
 
 import TopRatedTab from "./TopRatedTab"
+import GenreTab from "./GenreTab"
+import GenreTabMovies from "./GenreTabMovies"
 
+
+import Wishlist from "./Wishlist"
 import Favourite from "./Favourite"
 import MovieItem from "./MovieItem"
 import NavBar from "./NavBar"
@@ -29,132 +37,64 @@ function App() {
  const navigate = useNavigate();
   // console.log(ratingsData)
   
-  const handleFavourite =(items) =>
+
+  // ! one
+  const handleFavourite =(type,items,returnRatings) =>
   {
-    // console.log(items.genres)
-    const getGenre = items.genres.map(items => items.id).join(",")
-
-    const tets =  items.genres.map(items => [items.name, items.id]).join(",")
-
-    console.log(tets)
-      
-    // console.log(getGenre)
+    console.log(type)
     let newData = ratingsData
+    
     let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === items.id)
-    console.log(finder)
-    let ratingsChanged = {change: "no"}
-    let favouriteChanged = {change: "no"}
-    let favourite = "no" ;
 
+    let favourite,wishlist,rating;
 
-    if(finder !== -1)
+    if (finder !== -1)
     {
-          ratingsData[finder].fields?.Favourite === "no" ? favourite = "yes" : favourite
-
-      favouriteChanged = {change: "yes"}
-      console.log(favourite)
-
-      let newData2 = [
-        {id: newData[finder].id,
-        createdTime: newData[finder].createdTime, 
-        fields:{
-          MovieName: items.title,
-          MovieID: items.id,
-          Rating: newData[finder].fields.Rating, ratingsChanged,
-          backgroundImage: items.poster, 
-          Favourite: favourite, favouriteChanged,Genre: getGenre}},
-        ...newData.slice(0, finder),
-        ...newData.slice(finder + 1)]
-        console.log(newData2)
-        setRatingsData(newData2)
-    }
-    else{
-      let newdata3 = [
-      {id: "new",
-      createdTime: "newtime", fields:{MovieName: items.title,
-      MovieID: items.id,Rating: "-", ratingsChanged,
-      backgroundImage: items.poster_path, Favourite: "no",Genre: getGenre}},
-    ...newData]
-    setRatingsData(newdata3)
-    }
-  }
-
-  const handleRatings = (returnRatings,movDetails) =>
-  {
-    const getGenre = movDetails.genres.map(items => items.id).join(",")
-    let newData = ratingsData
-    let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === movDetails.id)
-    let ratingsChanged = {change: "no"}
-    console.log(movDetails.poster_path)
-    if(finder !== -1)
-    {
-      newData[finder].fields.Rating !== returnRatings ? ratingsChanged = {change: "yes"} : 0
-
-    let newData2 = [
-      {id: newData[finder].id,
-      createdTime: newData[finder].createdTime, 
-      fields:{MovieName: movDetails.title,
-        MovieID: movDetails.id,Rating: returnRatings, 
-        ratingsChanged,backgroundImage: movDetails.poster_path,Genre: getGenre}},
-      ...newData.slice(0, finder),
-      ...newData.slice(finder + 1)]
-      // console.log(newData2)
-      setRatingsData(newData2)
-    }
-    else{
-      let newdata3 = [
-        {id: "new",
-      createdTime: "newtime", 
-      fields:{MovieName: movDetails.title,
-        MovieID: movDetails.id,
-        Rating: returnRatings, ratingsChanged,
-        backgroundImage: movDetails.poster_path, 
-        Favourite: "no",Genre: getGenre}},
-    ...newData]
-    setRatingsData(newdata3)
+      favourite = ratingsData[finder].fields?.Favourite ;
+      wishlist = ratingsData[finder].fields?.WishList;
+      rating = ratingsData[finder].fields?.Rating;
     }
     
-  }
 
-  const handleWishList = (items) =>
-  {
-    console.log(items)
+    
 
-    // console.log(items.genres)
-    const getGenre = items.genres.map(items => items.id).join(",")
-
-    const tets =  items.genres.map(items => [items.name, items.id]).join(",")
-
-    // console.log(tets)
-      
-    // console.log(getGenre)
-    let newData = ratingsData
-    let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === items.id)
     console.log(finder)
-    let ratingsChanged = {change: "no"}
+
     let favouriteChanged = {change: "no"}
     let wishlistChanged = {change: "no"}
-    let favourite = "no" ;
-    let wishlist = "";
+    let ratingsChanged = {change: "no"}
 
+  
+    switch (type)
+    {
+      case 'favourite':
+        finder !== -1 ? (newData[finder].fields?.Favourite === "no" ? favourite = "yes" : favourite = "no",favouriteChanged = {change: "yes"}) 
+        : (favourite = "yes",rating = "-",wishlist =  "no")
+        break;
+      case 'wishlist':
+        finder !== -1 ? (newData[finder].fields?.WishList === "no" ? wishlist = "yes" : wishlist = "no", wishlistChanged = {change: "yes"}) 
+        : (wishlist =  "yes",rating = "-",favourite = "no")
+        break;
+      case 'rating':
+        finder !== -1 ? (newData[finder].fields.Rating !== returnRatings ? (ratingsChanged = {change: "yes"}, rating = returnRatings) : rating) 
+        : (rating = returnRatings ,wishlist =  "no",favourite = "no")
+        break;
+    }
 
+    const getGenre = items.genres.map(items => items.id).join(",")
+      
     if(finder !== -1)
     {
-      ratingsData[finder].fields?.Favourite === "no" ? favourite = "yes" : favourite
-      ratingsData[finder].fields?.Wishlist === "yes" ? wishlist = "no" : wishlist
-
-      wishlistChanged = {change: "yes"}
-      console.log(favourite)
-
       let newData2 = [
         {id: newData[finder].id,
         createdTime: newData[finder].createdTime, 
         fields:{
           MovieName: items.title,
           MovieID: items.id,
-          Rating: newData[finder].fields.Rating, ratingsChanged,
+          Rating: rating, ratingsChanged,
           backgroundImage: items.poster, 
-          Favourite: favourite, favouriteChanged,Genre: getGenre, Wishlist: "",wishlistChanged}},
+          Favourite: favourite, favouriteChanged,Genre: getGenre,
+          WishList: wishlist,wishlistChanged}},
         ...newData.slice(0, finder),
         ...newData.slice(finder + 1)]
         console.log(newData2)
@@ -164,10 +104,11 @@ function App() {
       let newdata3 = [
       {id: "new",
       createdTime: "newtime", fields:{MovieName: items.title,
-      MovieID: items.id,Rating: "-", ratingsChanged,
-      backgroundImage: items.poster_path, Favourite: "no",Genre: getGenre, WishList: "yes"}},
+      MovieID: items.id,
+      Rating: rating, ratingsChanged,
+      backgroundImage: items.poster_path, Favourite: favourite,Genre: getGenre,
+      WishList: wishlist}},
     ...newData]
-    console.log(newdata3)
     setRatingsData(newdata3)
     }
   }
@@ -206,29 +147,27 @@ function App() {
   }
 
 
-  async function updateRatings(x) {
-    // console.log("inside",x)
-  const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/${x.id}`;
-  const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-  const headers = {
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json'
-  }
-  const data = {
-    fields:
-    {
-    Rating: x.fields?.Rating,
-    Favourite: x.fields?.Favourite,
-    Wishlist: x.fields?.WishList
+    async function updateRatings(x) {
+    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/${x.id}`;
+    const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
+    const headers = {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json'
     }
-  };
-  const response = await fetch(url, {
-          method: "PATCH",
-          headers: headers,
-          body: JSON.stringify(data),})
-  const myRatings = await response.json();
-  // console.log("thisone !!!!:",myRatings)
-}
+    const data = {
+      fields:
+      {
+      Rating: x.fields?.Rating,
+      Favourite: x.fields?.Favourite,
+      WishList: x.fields?.WishList
+      }
+    };
+    const response = await fetch(url, {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify(data),})
+    const myRatings = await response.json();
+  }
 
 
   ratingsData.forEach(x => 
@@ -268,9 +207,7 @@ function App() {
       const response = await fetch(url,
         {headers: headers});
       const reponseData = await response.json();
-      // console.log(reponseData.records)
       setRatingsData(reponseData?.records)
-      // setMyRatings(reponseData?.records)
     }
     mmdbRatingstable();
   }, []);
@@ -339,24 +276,28 @@ updateSearchRanking(searchString);
 updateRecentSearch(searchString)
 }
 
-// get first data airtable for Recent Search
-useEffect(() => {
-  async function recentSearchTable() {
-    const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/RecentSearch";
-    const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-    const headers = {
-      'Authorization': `Bearer ${authToken}`,
-      'Content-Type': 'application/json'
+  // get first data airtable for Recent Search
+  useEffect(() => {
+    async function recentSearchTable() {
+      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/RecentSearch";
+      const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
+      const headers = {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      }
+      const response = await fetch(url,
+        {headers: headers});
+      const reponseData = await response.json();
+    //   setRecentSearchdata(reponseData);
+      setRecentSearch(reponseData?.records);
     }
-    const response = await fetch(url,
-      {headers: headers});
-    const reponseData = await response.json();
-  //   setRecentSearchdata(reponseData);
-    setRecentSearch(reponseData?.records);
-  }
-  recentSearchTable();
-}, []);
+    recentSearchTable();
+  }, []);
 
+  const handleMovDetails = (id) =>
+    {
+        navigate("/"+id);
+    }
 
 const resultsArr = searchResults?.results?.map((items,index)=>
 {
@@ -365,15 +306,21 @@ const resultsArr = searchResults?.results?.map((items,index)=>
 
   return (
     <>
+    <DataContext.Provider value={[handleMovDetails,ratingsData]}>
     <NavBar handleSearch={handleSearch} setSearch={setSearch} 
         searchString={searchString} handlePress={handlePress}/>
 
     <Routes>
-          <Route path="/" element={<MainPage ratingsData={ratingsData} resultsArr={resultsArr} recentSearch={recentSearch}/>} />
-          <Route path="/toprated" element={<TopRatedTab ratingsData={ratingsData}/>} />
+          <Route path="/" element={<MainPage resultsArr={resultsArr} recentSearch={recentSearch}/>} />
+          <Route path="/toprated" element={<TopRatedTab />} />
+          <Route path="/genre" element={<GenreTab />} />
+          <Route path="/genre/:id" element={<GenreTabMovies />} />
           <Route path="/favourite" element={<Favourite ratingsData={ratingsData}/>} />
-          <Route path="/:id" element={<MovieDetails handleRatings={handleRatings} handleFavourite={handleFavourite} handleWishList={handleWishList}/>} />
+          <Route path="/wishlist" element={<Wishlist ratingsData={ratingsData}/>} />
+          <Route path="/:id" element={<MovieDetails handleFavourite={handleFavourite}/>} />
     </Routes>
+    </DataContext.Provider>
+
     </>
   )
 }

@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import { DataContext } from "./App";
 
-export default function Favourite({ratingsData})
+export default function Wishlist({ratingsData})
 {
     const contextPassed = useContext(DataContext);
 
-    let filterRatings = ratingsData?.filter(x => (x.fields.Favourite) === "yes")
-    filterRatings = filterRatings.filter(x => x.fields.Rating !== "-")
+    console.log(ratingsData)
+
+    let filterRatings = ratingsData?.filter(x => (x.fields.WishList) === "yes")
     console.log(filterRatings)
 
     const topMMDBRatings = filterRatings.map((x,idx)=>

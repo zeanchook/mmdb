@@ -2,22 +2,28 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useContext } from "react";
+import { DataContext } from "./App";
+
+import { getMovDetails } from "./service/fetch-moviedetail-service"
 
 
-export default function MovieDetails({handleRatings,handleFavourite,handleWishList})
+export default function MovieDetails({handleFavourite})
 {
+    const contextPassed = useContext(DataContext);
+    const ratingsData = contextPassed[1];
+
+    console.log(ratingsData)
+
     const { id } = useParams();
 
-    // const [searchid, setSearchid] = useState("")
     const [movieDetails, setMovieDetails] = useState("")
     const [providersList , setProviders] = useState("")
 
     const [providerSelected,setProviderSelected] = useState("")
     const [ratingsVal, setRatingsVal] = useState(0)
 
-    // const [trailer, setTrailer] = useState("")
-
-    const [region, setRegion] = useState("")
+    const [curvalue, setCurValue] = useState("")
 
     const [trailerDisplay2, setTrailerDisplay] = useState("")
 
@@ -33,32 +39,30 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
         setRatingsVal(event.target.value)
     }
 
-    const handleClick = () =>
+    const handleFavouriteClick = (event) =>
     {
-        handleRatings(ratingsVal,movieDetails)
+        let buttonValue = event.target.name
+        event.target.style.color = "yellow"
+        handleFavourite(buttonValue,movieDetails,ratingsVal)
     }
 
-    const handleFavouriteClick = () =>
-    {
-        handleFavourite(movieDetails)
-    }
-
-    const handleWishListClick = () =>
-    {
-        handleWishList(movieDetails)
-    }
-
+  
     useEffect(() => {
-        async function getMovDetails() {
-            const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US?&api_key=36d3acba2fb699efb449a8d506e9430a`;
-            const response = await fetch(url)
-            const myResults = await response.json();
-            setMovieDetails(myResults)
-          }
+        async function getDetails()
+        {
+            let results = await getMovDetails(id);
 
-    getMovDetails()
-          
-        }, [id]);
+            let finder = ratingsData.findIndex(x=> parseInt(x.fields.MovieID) === (results.id))
+            finder !== -1 ? (setCurValue([ratingsData[finder].fields.Rating,ratingsData[finder].fields.Favourite,ratingsData[finder].fields.WishList]),
+            setRatingsVal([ratingsData[finder].fields.Rating])) : 0
+            
+            
+            // console.log(finder)
+            setMovieDetails(results)
+        }
+        getDetails();   
+    }, [ratingsData]);
+        
 
         // ! provider
     useEffect(() => {
@@ -66,21 +70,12 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
             const url = `https://api.themoviedb.org/3/movie/${id}/watch/providers?&api_key=36d3acba2fb699efb449a8d506e9430a`;
             const response = await fetch(url)
             const myResults = await response.json();
-
-            // console.log("this!!!:",myResults.result)
-
             setProviders(myResults)
             }
-        
-    getProvider()
-              
+    getProvider() 
             }, [id]);
 
-        // console.log("providers",providersList.results)
-
         let providersRegions = []
-
-
         for(let x in providersList.results)
         {
             providersRegions.push(x)
@@ -92,26 +87,22 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
         })
 
         // ! provider
-
-
         const selectorBox = () =>
         {
             if (regionList.length !== 0)
             {
-            return (<><label htmlFor="regionlist-choice">Check Provider:</label>
+            return (<div><label htmlFor="regionlist-choice">Check Provider:</label>
             <input placeholder="Select region" list="regionlist" id="regionlist-choice" name="regionlist-choice" onChange={handleRegChange}/>
             <datalist id="regionlist">
                 {regionList}
-            </datalist></>)
+            </datalist></div>)
             }
             else 
             {
-                return <div>No provider at the moment <button onClick={handleWishListClick}>Wishlist ?</button></div>
+                return <div>No provider at the moment <button name="wishlist" onClick={handleFavouriteClick}>Wishlist ?</button></div>
             }
         }
         
-        // console.log(providersRegions)
-
         const handleRegChange = (event) =>
         {
             const regionVal = event.target.value
@@ -122,9 +113,6 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
             }
             
         }
-
-        // console.log(providerSelected)
-        // console.log(providersList?.results[providerSelected])
 
         const providerBarWatch = providerSelected.flatrate?.map((x,idx) => 
         {
@@ -146,38 +134,7 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
             )
         })
 
-        // const providerBarBuyDis = (providerBarBuy.length !== undefined && providerBarBuy)
-        // console.log(providerBarBuyDis)
-
-        // console.log(providerBar)
-
-
-    //     let providerRegion = providers.results
-
-    //     for(let x in providerRegion)
-    //     {
-    //         setRegion(x,...region)
-    //     }
-
-    //     console.log(region)
-    
-
-    // console.log(movieDetails?.imdb_id)
-    // useEffect(() => {
-    //     console.log(movieDetails?.imdb_id)
-    //     async function getTrailer() {
-    //     const url = `https://api.themoviedb.org/3/movie/${movieDetails?.imdb_id}/videos?&api_key=36d3acba2fb699efb449a8d506e9430a`;
-    //     const response = await fetch(url)
-    //     const myResults = await response.json();
-    //     setTrailer(myResults)
-    //     console.log(myResults)
-    //     }
         
-    // getTrailer()
-              
-    // }, [movieDetails]);
-
-        // console.log(movieDetails)
         function trailerDisplay(trailer) { 
             
             if (trailer?.success === false)
@@ -186,7 +143,6 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
             }
 
             else{
-
             let videoFinder = trailer?.results?.filter(x => x.type === "Trailer")
             if (movieDetails.original_language !== "en")
             {
@@ -206,7 +162,6 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
                 const url = `https://api.themoviedb.org/3/movie/${movieDetails?.imdb_id}/videos?&api_key=36d3acba2fb699efb449a8d506e9430a`;
                 const response = await fetch(url)
                 const myResults = await response.json();
-                // setTrailer(myResults)
                 console.log(myResults)
                 return myResults
                 }
@@ -221,20 +176,38 @@ export default function MovieDetails({handleRatings,handleFavourite,handleWishLi
         return(<input type="number" max="10" min="0" step="1" placeholder="Input your rating" value={ratingsVal} onChange={handleChange}></input>)
     }
 
+    const genres = movieDetails?.genres?.map(x => 
+        {
+            return(<span> {x.name} </span>)
+        })
+
+    console.log(curvalue)
+
     return (<>
     {/* {movieDetails} */}
-    <img style={{width:"10%"}}src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`} alt={movieDetails.original_title} />
-    <div className="movie-title">{movieDetails.title}</div>
-    <div className="movie-release-date">{movieDetails.release_date}</div>
-    <div className="movie-release-date">{movieDetails.overview}</div>
-    <div className="movie-release-date">Runtime : {movieDetails.runtime}</div>
-    <div className="movie-release-date">Release Year : {movieDetails.release_date}</div>
-    <div><button onClick={handleTrailerClick}>Watch Trailer</button> {trailerDisplay2}</div>
-    <div>MMDB Ratings: ⭐️{ratings()}</div><button onClick={handleClick}>Vote</button>
-    <div><button onClick={handleFavouriteClick}>Favourite</button></div>
-    <button onClick={handleBack}>back</button>
-    {selectorBox()}
-    {providerBarWatch && <div style={{display:"flex"}}>Watch at: {providerBarWatch}</div>}
-    {providerBarBuy && <div style={{display:"flex"}}>Buy at: {providerBarBuy}</div>}
+    <div style={{display:"flex"}}>
+        <img style={{width:"50%"}}src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`} alt={movieDetails.original_title} />
+
+    <div className="movie-details">
+        <div className="movie-description">
+            <div className="movie-title">{movieDetails.title}</div>
+            <div className="movie-title">{genres}</div>
+            <div className="movie-release-date">{movieDetails.release_date}</div>
+            <div className="movie-release-date">{movieDetails.overview}</div>
+            <div className="movie-release-date">Runtime : {movieDetails.runtime}</div>
+            <div className="movie-release-date">Release Year : {movieDetails.release_date}</div>
+        </div>
+
+        <div className="movie-buttons" >
+            <div><button onClick={handleTrailerClick}>Watch Trailer</button> {trailerDisplay2}</div>
+            <div>MMDB Ratings: ⭐️ {curvalue[0]} {ratings()}</div><button name="rating" onClick={handleFavouriteClick}>Vote</button>
+            <div><button name="favourite"  onClick={handleFavouriteClick}>Favourite: {curvalue[1]}</button></div>
+            <button onClick={handleBack}>back</button>
+            {selectorBox()}
+            {providerBarWatch && <div style={{display:"flex"}}>Watch at: {providerBarWatch}</div>}
+            {providerBarBuy && <div style={{display:"flex"}}>Buy at: {providerBarBuy}</div>}
+        </div>
+    </div>
+    </div>
     </>)
 }

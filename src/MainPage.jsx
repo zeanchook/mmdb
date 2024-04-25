@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+/* eslint-disable react/prop-types */
 
-import { discovergenre } from "./service/genre-service"
+import { discovergenre } from "./service/genrerecommend-service"
 
 import RecentSearch from "./RecentSearch"
 import TopMMDBRatings from "./TopMMDBRatings"
 import GenreRec from "./GenreRec"; 
+import NewUpcomingMovies from "./NewUpcomingMovies"
+import { useContext } from "react";
+import { DataContext } from "./App";
 
 
-export default function Test({ratingsData,resultsArr,recentSearch})
+export default function MainPage({resultsArr,recentSearch})
 {
-    
+    const contextPassed = useContext(DataContext);
+    const ratingsData = contextPassed[1];
     // !! Handling genre
     // console.log(ratingsData)
 
+    // eslint-disable-next-line react/prop-types
     let getRecGenre = (ratingsData.map(x=>x.fields.Genre)).join(",").split(",")
 
     getRecGenre = getRecGenre.reduce((acc, x) => {
@@ -39,8 +43,6 @@ export default function Test({ratingsData,resultsArr,recentSearch})
     }
     )
   
-    console.log("recommned genre:",getRecGenre)
-
     const genreRecommendation = async() => await discovergenre(getRecGenre);
 
 
@@ -48,7 +50,7 @@ export default function Test({ratingsData,resultsArr,recentSearch})
 
     return(
     <>
-
+        <NewUpcomingMovies />
         <TopMMDBRatings ratingsData={ratingsData}/>
         <GenreRec genreRecommendation={genreRecommendation} getRecGenre={getRecGenre}/>
     
