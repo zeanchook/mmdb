@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 
-import { discovergenre } from "./service/genrerecommend-service"
 
 import RecentSearch from "./RecentSearch"
 import TopMMDBRatings from "./TopMMDBRatings"
@@ -10,22 +9,20 @@ import { useContext } from "react";
 import { DataContext } from "./App";
 
 
-export default function MainPage({resultsArr,recentSearch})
+export default function MainPage({recentSearch})
 {
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
     // !! Handling genre
-    // console.log(ratingsData)
 
     // eslint-disable-next-line react/prop-types
     let getRecGenre = (ratingsData.map(x=>x.fields.Genre)).join(",").split(",")
 
     getRecGenre = getRecGenre.reduce((acc, x) => {
-        // console.log(acc)
         acc[x] = (acc[x] || 0) + 1;
         return acc;
     }, {});
-
+    console.log(getRecGenre)
     getRecGenre = Object.entries(getRecGenre).map(([genre, count]) => ({ genre, count }));
     getRecGenre = getRecGenre.sort((b,a) => 
     {
@@ -43,7 +40,6 @@ export default function MainPage({resultsArr,recentSearch})
     }
     )
   
-    const genreRecommendation = async() => await discovergenre(getRecGenre);
 
 
     // !! Handling genre
@@ -52,14 +48,12 @@ export default function MainPage({resultsArr,recentSearch})
     <>
         <NewUpcomingMovies />
         <TopMMDBRatings ratingsData={ratingsData}/>
-        <GenreRec genreRecommendation={genreRecommendation} getRecGenre={getRecGenre}/>
+        <GenreRec getRecGenre={getRecGenre}/>
     
         <div className="app-container">
         <div><RecentSearch recentSearch={recentSearch}/></div>
         
-        <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}>
-            {resultsArr}    
-        </div>
+        
         
     </div>
     

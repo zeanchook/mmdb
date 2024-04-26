@@ -3,9 +3,14 @@ import { useEffect,useState } from "react"
 
 import { getMovies } from "./service/genremovies-service"
 
+import { useContext } from "react";
+import { DataContext } from "./App";
+
 
 export default function GenreTabMovies()
 {
+
+    const contextPassed = useContext(DataContext);
 
     const [genreMovie, setGenreMovies] = useState("")
     const [pageState, setPage] = useState(1)
@@ -21,7 +26,7 @@ export default function GenreTabMovies()
         }    
     fetchData();
     return () => {ignore = true;};
-    }, [pageState]);
+    }, [id]);
 
     const handleClickNext = () =>
     {

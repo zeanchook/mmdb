@@ -3,6 +3,8 @@ import { useState,useEffect } from 'react'
 import { createContext } from "react";
 export const DataContext = createContext();
 
+import "bootstrap/dist/css/bootstrap.css";
+
 // import './App.css'
 import MainPage from "./MainPage"
 import MovieDetails from "./MovieDetails"
@@ -11,10 +13,9 @@ import TopRatedTab from "./TopRatedTab"
 import GenreTab from "./GenreTab"
 import GenreTabMovies from "./GenreTabMovies"
 
-
+import SearchResults from "./SearchResults"
 import Wishlist from "./Wishlist"
 import Favourite from "./Favourite"
-import MovieItem from "./MovieItem"
 import NavBar from "./NavBar"
 import './test.css'
 import { Route, Routes } from "react-router-dom";
@@ -25,7 +26,6 @@ function App() {
 
   const [ratingsData, setRatingsData] = useState([]);
 
-  const [search,setSearch] = useState("");
   const [searchString, setsearchString] = useState("");
 
   const [searchResults,setSearchResults] = useState("");
@@ -35,17 +35,12 @@ function App() {
   const [recentSearch, setRecentSearch] = useState([]);
 
  const navigate = useNavigate();
-  // console.log(ratingsData)
   
-
   // ! one
-  const handleFavourite =(type,items,returnRatings) =>
+  const handleFavourite =(type,items,returnRatings,providerDetails) =>
   {
-    console.log(type)
     let newData = ratingsData
-    
     let finder = newData.findIndex(x => parseInt(x.fields.MovieID) === items.id)
-
     let favourite,wishlist,rating;
 
     if (finder !== -1)
@@ -56,13 +51,10 @@ function App() {
     }
     
 
-    
-
-    console.log(finder)
-
     let favouriteChanged = {change: "no"}
     let wishlistChanged = {change: "no"}
     let ratingsChanged = {change: "no"}
+    let provider = providerDetails
 
   
     switch (type)
@@ -92,9 +84,9 @@ function App() {
           MovieName: items.title,
           MovieID: items.id,
           Rating: rating, ratingsChanged,
-          backgroundImage: items.poster, 
+          backgroundImage: items.poster_path, 
           Favourite: favourite, favouriteChanged,Genre: getGenre,
-          WishList: wishlist,wishlistChanged}},
+          WishList: wishlist,wishlistChanged,Provider: provider}},
         ...newData.slice(0, finder),
         ...newData.slice(finder + 1)]
         console.log(newData2)
@@ -107,8 +99,9 @@ function App() {
       MovieID: items.id,
       Rating: rating, ratingsChanged,
       backgroundImage: items.poster_path, Favourite: favourite,Genre: getGenre,
-      WishList: wishlist}},
+      WishList: wishlist,Provider: provider}},
     ...newData]
+    console.log(newdata3)
     setRatingsData(newdata3)
     }
   }
@@ -116,7 +109,7 @@ function App() {
   const updateRating = () =>
   {
     async function createRatings(fields) {
-    console.log("inside",fields)
+    console.log("inside",fields.Provider)
     const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/`;
     const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
     const headers = {
@@ -132,7 +125,8 @@ function App() {
       backgroundImage: fields?.backgroundImage,
       Favourite: fields?.Favourite,
       Genre: fields?.Genre,
-      WishList: fields?.WishList
+      WishList: fields?.WishList,
+      Provider: fields?.Provider
       }
     };
     const response = await fetch(url, {
@@ -159,7 +153,8 @@ function App() {
       {
       Rating: x.fields?.Rating,
       Favourite: x.fields?.Favourite,
-      WishList: x.fields?.WishList
+      WishList: x.fields?.WishList,
+      Provider: x.fields?.Provider
       }
     };
     const response = await fetch(url, {
@@ -168,7 +163,6 @@ function App() {
             body: JSON.stringify(data),})
     const myRatings = await response.json();
   }
-
 
   ratingsData.forEach(x => 
     {
@@ -179,17 +173,14 @@ function App() {
       else if(x.fields.ratingsChanged?.change === "yes")
       {
             updateRatings(x)
-            // console.log(x)
       }
       else if(x.fields.favouriteChanged?.change === "yes")
       {
             updateRatings(x)
-            // console.log(x)
       }
       else if(x.fields.wishlistChanged?.change === "yes")
       {
             updateRatings(x)
-            // console.log(x)
       }
     })
 
@@ -218,15 +209,18 @@ function App() {
 {
   
     setSearchResults(searchQuery);
-    console.log(searchQuery)
     
 }
   
-const handleSearch = () =>
+const handleSearch = (searchValue) =>
 {
-    let searchString = search.replace(" ","%20")
-    searchString.length !== 0 ? setsearchString(searchString) : 0
-        navigate("/");
+  
+    let searchString = searchValue.replace(" ","%20")
+    if(searchString.length !== 0 )
+    {
+    setsearchString(searchString)
+    navigate("/movieresults")
+
 
     // !handle ranking search 
     const updateSearchRanking = (searchString) => {
@@ -236,7 +230,6 @@ const handleSearch = () =>
         if (existingMovieIndex !== -1) {
             inside = [...searchRanking]
             inside[existingMovieIndex].count ++;
-            // console.log("inside become",inside)
         }
         else{
             inside = [...searchRanking, { name: searchString, count: 1 }]
@@ -272,8 +265,9 @@ const handleSearch = () =>
         setRecentSearch(newData2)
     };
     // !handle recent search 
-updateSearchRanking(searchString);
-updateRecentSearch(searchString)
+    updateSearchRanking(searchString);
+    updateRecentSearch(searchString)
+  }
 }
 
   // get first data airtable for Recent Search
@@ -296,28 +290,28 @@ updateRecentSearch(searchString)
 
   const handleMovDetails = (id) =>
     {
-        navigate("/"+id);
+        navigate("/movieresults/"+id);
     }
 
-const resultsArr = searchResults?.results?.map((items,index)=>
-{
-    return (<MovieItem items={items} index={index} key={index} ratingsData={ratingsData}/>);
-})
+
 
   return (
     <>
     <DataContext.Provider value={[handleMovDetails,ratingsData]}>
-    <NavBar handleSearch={handleSearch} setSearch={setSearch} 
+    <NavBar handleSearch={handleSearch} 
         searchString={searchString} handlePress={handlePress}/>
 
     <Routes>
-          <Route path="/" element={<MainPage resultsArr={resultsArr} recentSearch={recentSearch}/>} />
+          <Route path="/" element={<MainPage  recentSearch={recentSearch}/>} />
           <Route path="/toprated" element={<TopRatedTab />} />
-          <Route path="/genre" element={<GenreTab />} />
+          {/* <Route path="/genre" element={<GenreTab />} /> */}
           <Route path="/genre/:id" element={<GenreTabMovies />} />
           <Route path="/favourite" element={<Favourite ratingsData={ratingsData}/>} />
-          <Route path="/wishlist" element={<Wishlist ratingsData={ratingsData}/>} />
-          <Route path="/:id" element={<MovieDetails handleFavourite={handleFavourite}/>} />
+          <Route path="/wishlist" element={<Wishlist />} />
+
+          <Route path="/movieresults" element={<SearchResults searchResults={searchResults}/>} />
+
+          <Route path="/movieresults/:id" element={<MovieDetails handleFavourite={handleFavourite}/>} />
     </Routes>
     </DataContext.Provider>
 

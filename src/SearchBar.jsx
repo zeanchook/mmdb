@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import "bootstrap/dist/css/bootstrap.css";
+
+
 
 // eslint-disable-next-line react-refresh/only-export-components, react/display-name
-export default function({ setSearch,handleSearch,searchString,handlePress })
+export default function({ handleSearch,searchString,handlePress })
 {
     const inappropriateKeywords = ["adult","porn","sex","nude","explicit","xxx","nsfw","erotic","sexual","kinky","sensual","intimate","porno"];
-    // const navigate = useNavigate();
-    // const navigate = useNavigate();
-    // navigate("/");
+    
+    const [searchValue , setSearchValue] = useState("")
 
     const handleChange = (event) =>
     {
@@ -16,9 +18,8 @@ export default function({ setSearch,handleSearch,searchString,handlePress })
         inappropriateKeywords.forEach( x=> {
             event.target.value.toLowerCase().includes(x) ? inappropriateSearch = true : 0
         })
-        inappropriateSearch === false ? setSearch(event.target.value) : (event.target.value = "")
-        
-    // navigate("/");
+        inappropriateSearch === false ? setSearchValue(event.target.value) : (event.target.value = "")
+
     }
 
     // Handle Search
@@ -33,10 +34,11 @@ export default function({ setSearch,handleSearch,searchString,handlePress })
         searchString !== "" ? searchMovies() : null
         console.log("no run?",searchString)
     }, [searchString]);
+
     return(
-        <div>
-        <input type="text" id="search" placeholder="Search for a movie" onChange={handleChange}/>
-        <button onClick={handleSearch}>Search</button></div>
+        <div className="d-flex">
+        <input type="search" id="search" placeholder="Search for a movie" onChange={handleChange}/>
+        <button onClick={()=>handleSearch(searchValue)}>Search</button></div>
     )
 
 }

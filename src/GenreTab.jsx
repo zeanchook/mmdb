@@ -17,6 +17,22 @@ export default function GenreTab()
     
     }, []);
 
+    const test = genreTab?.records?.sort((a,b) =>
+    {
+        if(a.fields.name > b.fields.name)
+        {
+            return 1;
+        }
+        else if(a.fields.name < b.fields.name)
+        {
+            return -1;
+        }
+        else{
+            return 0;
+        }
+    })
+    console.log(test)
+
     const genreList = genreTab?.records?.map(x=>
         {
             // eslint-disable-next-line react/jsx-key

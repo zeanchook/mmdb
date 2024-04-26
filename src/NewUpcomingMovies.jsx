@@ -25,13 +25,18 @@ export default function NewUpcomingMovies()
     const filteredMovies = movies?.results?.slice(0 ,5)
 
     // console.log(filteredMovies?.slice(0,5))
+
+    console.log(filteredMovies)
    
     const topMMDBRatings = filteredMovies?.map((x,idx)=>
         {
+            const [year, month, day] = x.release_date.split("-");
+            const formattedDate = `${day}-${month}-${year}`;
+
             return((x?.poster_path && (x?.popularity > 10)) && <div key={"up"+ idx} className="movie-poster-container" onClick={() => contextPassed[0](x.id)} >
             <img src={`https://image.tmdb.org/t/p/w500${x.poster_path}`} alt={x.original_title} />
             <div className="movie-title">{x.original_title}</div>
-            <div className="movie-release-date">📅 {x.release_date}</div>
+            <div className="movie-release-date">📅 {formattedDate}</div>
             {/* <div >{movieRatings}</div> */}
           </div>)     
         })

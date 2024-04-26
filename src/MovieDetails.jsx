@@ -10,17 +10,16 @@ import { getMovDetails } from "./service/fetch-moviedetail-service"
 
 export default function MovieDetails({handleFavourite})
 {
+    const { id } = useParams();
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
-
-    console.log(ratingsData)
-
-    const { id } = useParams();
-
     const [movieDetails, setMovieDetails] = useState("")
     const [providersList , setProviders] = useState("")
 
+    const [providerAvail, setProviderAvail] = useState("No")
+
     const [providerSelected,setProviderSelected] = useState("")
+
     const [ratingsVal, setRatingsVal] = useState(0)
 
     const [curvalue, setCurValue] = useState("")
@@ -43,10 +42,9 @@ export default function MovieDetails({handleFavourite})
     {
         let buttonValue = event.target.name
         event.target.style.color = "yellow"
-        handleFavourite(buttonValue,movieDetails,ratingsVal)
+        handleFavourite(buttonValue,movieDetails,ratingsVal,providerAvail)
     }
 
-  
     useEffect(() => {
         async function getDetails()
         {
@@ -55,25 +53,23 @@ export default function MovieDetails({handleFavourite})
             let finder = ratingsData.findIndex(x=> parseInt(x.fields.MovieID) === (results.id))
             finder !== -1 ? (setCurValue([ratingsData[finder].fields.Rating,ratingsData[finder].fields.Favourite,ratingsData[finder].fields.WishList]),
             setRatingsVal([ratingsData[finder].fields.Rating])) : 0
-            
-            
-            // console.log(finder)
+                        
             setMovieDetails(results)
         }
         getDetails();   
     }, [ratingsData]);
         
-
-        // ! provider
-    useEffect(() => {
-        async function getProvider() {
-            const url = `https://api.themoviedb.org/3/movie/${id}/watch/providers?&api_key=36d3acba2fb699efb449a8d506e9430a`;
-            const response = await fetch(url)
-            const myResults = await response.json();
-            setProviders(myResults)
-            }
-    getProvider() 
-            }, [id]);
+    // ! provider
+        useEffect(() => {
+            async function getProvider() {
+                const url = `https://api.themoviedb.org/3/movie/${id}/watch/providers?&api_key=36d3acba2fb699efb449a8d506e9430a`;
+                const response = await fetch(url)
+                const myResults = await response.json();
+                Object.keys(myResults.results).length === 0 ? setProviderAvail("No") : setProviderAvail("Yes")
+                setProviders(myResults)
+                }
+        getProvider() 
+                }, [id]);
 
         let providersRegions = []
         for(let x in providersList.results)
@@ -81,9 +77,9 @@ export default function MovieDetails({handleFavourite})
             providersRegions.push(x)
         }
 
-        const regionList = providersRegions.map(x => 
+        const regionList = providersRegions.map((x,idx) => 
         {
-            return (<option value={x}></option>)
+            return (<option value={x} key={"option"+idx}></option>)
         })
 
         // ! provider
@@ -91,6 +87,7 @@ export default function MovieDetails({handleFavourite})
         {
             if (regionList.length !== 0)
             {
+
             return (<div><label htmlFor="regionlist-choice">Check Provider:</label>
             <input placeholder="Select region" list="regionlist" id="regionlist-choice" name="regionlist-choice" onChange={handleRegChange}/>
             <datalist id="regionlist">
@@ -99,14 +96,13 @@ export default function MovieDetails({handleFavourite})
             }
             else 
             {
-                return <div>No provider at the moment <button name="wishlist" onClick={handleFavouriteClick}>Wishlist ?</button></div>
+                return <div>No provider at the moment</div>
             }
         }
         
         const handleRegChange = (event) =>
         {
             const regionVal = event.target.value
-            console.log(regionVal)
             if(providersRegions.includes(regionVal))
             {
                 setProviderSelected(providersList?.results[regionVal])
@@ -136,7 +132,7 @@ export default function MovieDetails({handleFavourite})
 
         
         function trailerDisplay(trailer) { 
-            
+            console.log(trailer)
             if (trailer?.success === false)
             {
                 return "No trailer available"
@@ -144,6 +140,7 @@ export default function MovieDetails({handleFavourite})
 
             else{
             let videoFinder = trailer?.results?.filter(x => x.type === "Trailer")
+            console.log(trailer)
             if (movieDetails.original_language !== "en")
             {
                 videoFinder = videoFinder?.filter(x => (x.name.includes("English")))
@@ -173,15 +170,18 @@ export default function MovieDetails({handleFavourite})
     
     const ratings = () =>
     {
-        return(<input type="number" max="10" min="0" step="1" placeholder="Input your rating" value={ratingsVal} onChange={handleChange}></input>)
+        return(<input type="range" max="10" min="0" step="0.1" value={ratingsVal} onChange={handleChange}></input> 
+        )
     }
 
-    const genres = movieDetails?.genres?.map(x => 
+    const genres = movieDetails?.genres?.map((x,idx) => 
         {
-            return(<span> {x.name} </span>)
+            return(<span key={"genre"+idx}> {x.name} </span>)
         })
+        
+        
+      
 
-    console.log(curvalue)
 
     return (<>
     {/* {movieDetails} */}
@@ -195,17 +195,21 @@ export default function MovieDetails({handleFavourite})
             <div className="movie-release-date">{movieDetails.release_date}</div>
             <div className="movie-release-date">{movieDetails.overview}</div>
             <div className="movie-release-date">Runtime : {movieDetails.runtime}</div>
-            <div className="movie-release-date">Release Year : {movieDetails.release_date}</div>
         </div>
 
         <div className="movie-buttons" >
             <div><button onClick={handleTrailerClick}>Watch Trailer</button> {trailerDisplay2}</div>
-            <div>MMDB Ratings: ⭐️ {curvalue[0]} {ratings()}</div><button name="rating" onClick={handleFavouriteClick}>Vote</button>
+            <div>MMDB Ratings: ⭐️ {curvalue[0]} {ratings()}<button name="rating" onClick={handleFavouriteClick}>Vote</button></div>
             <div><button name="favourite"  onClick={handleFavouriteClick}>Favourite: {curvalue[1]}</button></div>
+            
+            
+            <div>
+                {selectorBox()}
+                {providerBarWatch && <div style={{display:"flex"}}>Watch at: {providerBarWatch}</div>}
+                {providerBarBuy && <div style={{display:"flex"}}>Buy at: {providerBarBuy}</div>}
+                <button name="wishlist" onClick={handleFavouriteClick}>Wishlist ?</button>
+            </div>
             <button onClick={handleBack}>back</button>
-            {selectorBox()}
-            {providerBarWatch && <div style={{display:"flex"}}>Watch at: {providerBarWatch}</div>}
-            {providerBarBuy && <div style={{display:"flex"}}>Buy at: {providerBarBuy}</div>}
         </div>
     </div>
     </div>
