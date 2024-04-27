@@ -58,11 +58,14 @@ export default function GenreRec({getRecGenre}){
         let returnRecords = matchingRecords?.map(x => x?.fields?.name);
 
 
-    return(<>{status === "loading" ? <Spinner animation="border" role="status" variant="primary">
+    return(<div style={{display:"flex", alignContent:"center",justifyContent:"center"}}>{status === "loading" ? <Spinner animation="border" role="status" variant="primary">
       <span className="visually-hidden">Loading...</span>
     </Spinner> : 
-    recLength && 
-    <div style={{display:"flex",width:"50%"}}>
-        Because you like {returnRecords} So figured you might like these too !{recDisplay}</div>}
-    </>)
+    recLength === 0 ? "No recommended movie at the moment" :
+    <div style={{display:"flex",alignContent:"center",justifyContent:"center",flexDirection:"column"}}>
+        <div style={{textAlign:"center"}}>Because you like {returnRecords} So figured you might like these too !</div>
+        <div style={{display:"flex",alignContent:"center",justifyContent:"center"}}>{recDisplay}</div>
+        </div>}
+    </div>
+    )
 }

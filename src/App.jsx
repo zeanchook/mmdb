@@ -253,15 +253,18 @@ const handleSearch = (searchValue) =>
             }
             return 0;
         })
-
+        console.log(newData2)
         let index = newData2.findIndex(item => item.fields.Name === '1');
+        let existIdx = newData2.findIndex(item => item.fields.SearchName === searchString);
+        if(existIdx === -1)
+        {
         if (index !== -1) {
-            
             for (let i = newData2.length - 1; i > 0; i--) {
                 newData2[i].fields.SearchName = newData2[i - 1].fields.SearchName;
             }
             newData2[index].fields.SearchName = searchString;
         }
+      }
         setRecentSearch(newData2)
     };
     // !handle recent search 
@@ -289,9 +292,9 @@ const handleSearch = (searchValue) =>
   }, []);
 
   const handleMovDetails = (id) =>
-    {
-        navigate("/movieresults/"+id);
-    }
+  {
+      navigate("/movieresults/"+id);
+  }
 
 
 
@@ -302,7 +305,7 @@ const handleSearch = (searchValue) =>
         searchString={searchString} handlePress={handlePress}/>
 
     <Routes>
-          <Route path="/" element={<MainPage  recentSearch={recentSearch}/>} />
+          <Route path="/" element={<MainPage  recentSearch={recentSearch} handleSearch={handleSearch}/>} />
           <Route path="/toprated" element={<TopRatedTab />} />
           {/* <Route path="/genre" element={<GenreTab />} /> */}
           <Route path="/genre/:id" element={<GenreTabMovies />} />

@@ -43,7 +43,7 @@ export default function NavBar({handleSearch,setSearch,searchString,handlePress}
         }
     })
 
-    console.log(genreTabSorted)
+    // console.log(genreTabSorted)
 
     const genreList = genreTabSorted?.map(x=>
         {
@@ -55,17 +55,7 @@ export default function NavBar({handleSearch,setSearch,searchString,handlePress}
 
     return(
 
-    //     <div className="topnav" >
-    // <Link to="/"><h1>MMDB</h1></Link> 
-    // <Link to="/toprated"><h1>Top Rated</h1></Link> 
-    // <Link to="/favourite"><h1>Favourite</h1></Link> 
-    // <Link to="/wishlist"><h1>Wishlists</h1></Link> 
-    // <Link to="/genre"><h1>Genre</h1></Link> 
-    // <SearchBar handleSearch={handleSearch} setSearch={setSearch} 
-    //     searchString={searchString} handlePress={handlePress}/>
-        
-    // </div>
-
+  
         <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme="dark">
         <Container fluid>
           <Navbar.Brand >MMDB</Navbar.Brand>

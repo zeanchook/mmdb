@@ -41,5 +41,8 @@ export default function NewUpcomingMovies()
           </div>)     
         })
 
-    return(<div style={{display:"flex"}}>New Upcoming Movies: {topMMDBRatings}</div>)
+    return(<div style={{display:"flex",alignContent:"center",justifyContent:"center",flexDirection:"column"}}>
+            <div style={{textAlign:"center"}}>New Upcoming Movies:</div>
+            <div style={{display:"flex",alignContent:"center",justifyContent:"center"}}>{topMMDBRatings}</div>
+        </div>)
 }

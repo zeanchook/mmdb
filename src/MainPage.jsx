@@ -9,7 +9,7 @@ import { useContext } from "react";
 import { DataContext } from "./App";
 
 
-export default function MainPage({recentSearch})
+export default function MainPage({recentSearch,handleSearch})
 {
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
@@ -46,16 +46,15 @@ export default function MainPage({recentSearch})
 
     return(
     <>
+        <div className="app-container">
+            <div><RecentSearch recentSearch={recentSearch} handleSearch={handleSearch}/></div> 
+        </div>
+        
         <NewUpcomingMovies />
         <TopMMDBRatings ratingsData={ratingsData}/>
-        <GenreRec getRecGenre={getRecGenre}/>
+        <GenreRec getRecGenre={getRecGenre} />
     
-        <div className="app-container">
-        <div><RecentSearch recentSearch={recentSearch}/></div>
         
-        
-        
-    </div>
     
     </>);
 }

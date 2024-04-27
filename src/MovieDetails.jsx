@@ -8,6 +8,8 @@ import { DataContext } from "./App";
 import { getMovDetails } from "./service/fetch-moviedetail-service"
 
 
+
+
 export default function MovieDetails({handleFavourite})
 {
     const { id } = useParams();

@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import Spinner from 'react-bootstrap/Spinner';
+
 
 
 export default function TopMMDBRatings({ratingsData})
@@ -40,10 +42,16 @@ export default function TopMMDBRatings({ratingsData})
             <img src={`https://image.tmdb.org/t/p/w500${x.fields.backgroundImage}`} ></img><a>⭐️ {x.fields.Rating}</a></div>
     })
 
+    // topMMDBRatings.length === 0
     
-    return((topMMDBRatings.length !== 0) &&
-        <div style={{display:"flex",width:"50%"}}>MMDB Top Rated:
-        {topMMDBRatings}
-        </div>
-    )
+        return(<div style={{display:"flex", alignContent:"center",justifyContent:"center"}}>{status === "loading" ? <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner> : 
+      topMMDBRatings.length === 0 ? "No recommended movie at the moment" :
+        <div style={{display:"flex",alignContent:"center",justifyContent:"center",flexDirection:"column"}}>
+            <div style={{textAlign:"center"}}>New Upcoming Movies:</div>
+            <div style={{display:"flex",alignContent:"center",justifyContent:"center"}}>{topMMDBRatings}</div>
+        </div>}
+        </div>)
+    
 }

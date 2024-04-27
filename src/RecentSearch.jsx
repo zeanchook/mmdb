@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function RecentSearch({recentSearch})
+export default function RecentSearch({recentSearch,handleSearch})
 {
     // console.log("recentSearch",recentSearch)
 
@@ -51,7 +51,7 @@ export default function RecentSearch({recentSearch})
           const data = {
             fields:
             {
-            SearchName: x.fields.SearchName
+              SearchName: x.fields.SearchName
             }
           };
           const response = await fetch(url, {
@@ -67,16 +67,21 @@ export default function RecentSearch({recentSearch})
 
 
 // console.log(recentSearchBar[0].fields.SearchName)
-
+const handleClick =(event) =>
+{
+  handleSearch(event.target.innerHTML)
+}
 
 // eslint-disable-next-line react/prop-types
 const recentSearchBarDisplay = recentSearch.map((x,idx)=>
   {
     // eslint-disable-next-line react/jsx-key
-    return(<div key={idx} className="recent-search-bar">{x?.fields?.SearchName?.replace("%20"," ")} </div>)
+    return(
+    <div key={idx} className="recent-search-bar" onClick={handleClick} style={{textAlign:"center"}}>
+      {x?.fields?.SearchName?.replace("%20"," ")}
+    </div>)
   })
 
-  // console.log(recentSearchBarDisplay)
 
     return (<div style={{display:"flex"}}>
         {recentSearchBarDisplay}
