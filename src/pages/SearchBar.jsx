@@ -35,7 +35,7 @@ export default function({ handleSearch,searchString,handlePress })
 
     return(
         <div className="d-flex" style={{display:"flex"}}>
-        <input type="search" id="search" placeholder="Search..." style={{borderRadius:"10px",fontSize:"10px",backgroundColor:"white"}}onChange={handleChange}/>
+        <input type="search" id="search" placeholder="Search..." style={{borderRadius:"10px",fontSize:"10px",backgroundColor:"white",color:"black"}}onChange={handleChange}/>
         <Button variant="success" onClick={()=>handleSearch(searchValue)} style={{borderRadius:"10px",marginLeft:"5px"}}>Search</Button></div>
     )
 

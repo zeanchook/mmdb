@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import SearchBar from "./SearchBar"
-
-
-
 import { randomMovies } from "../service/getrandom-movie"
-
 
 import { useContext,useEffect,useState } from "react";
 import { DataContext } from "../App";
@@ -14,8 +10,6 @@ export default function MainPage()
 {
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
-
-
     const [randomMovie,setRandomMovie] = useState("")
 
     useEffect(() => {
@@ -29,7 +23,7 @@ export default function MainPage()
         fetchData();
         
         }, []);
-   console.log(randomMovie)
+
     return(
     <div style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
         <div style={{height:"100%",width:"100%",position:"absolute",top:"0px",zIndex:"-1",

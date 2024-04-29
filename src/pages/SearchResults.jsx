@@ -15,8 +15,8 @@ export default function SearchResults({searchResults})
     })
 
     
-
-    return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",backgroundColor:"grey",height:"100%",width:"100%",position:"absolute",top:"0px",zIndex:"-1"}}>
+    return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+       
     <h2>Search Results</h2><div style={{display:"flex",flexWrap:"wrap",margin:"30px"}}>{resultsArr}</div>
 </div>)
 }

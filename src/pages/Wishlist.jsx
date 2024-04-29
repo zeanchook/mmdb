@@ -9,10 +9,7 @@ export default function Wishlist()
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
 
-    // console.log(ratingsData)
-
     let filterRatings = ratingsData?.filter(x => (x.fields.WishList) === "yes")
-    console.log(filterRatings)
 
     const topMMDBRatings = filterRatings.map((x,idx)=>
         {
@@ -23,7 +20,7 @@ export default function Wishlist()
         })
         
         return (<div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-        backgroundColor:"grey",height:"100%",width:"100%",position:"absolute",top:"0px",zIndex:"-1"}}>
+        backgroundColor:"grey"}}>
             <h1>Wishlist</h1><div style={{display:"flex",flexWrap:"wrap"}}></div >
-            <div style={{display:"flex",flexWrap:"wrap"}}>{topMMDBRatings}</div></div>)
+            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center"}}>{topMMDBRatings}</div></div>)
     }

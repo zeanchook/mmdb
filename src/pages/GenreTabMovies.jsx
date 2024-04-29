@@ -18,7 +18,6 @@ export default function GenreTabMovies()
     const [genreName, setGenreName] = useState("")
     const { id } = useParams();
 
-    console.log(id)
     useEffect(() => {
         let ignore = false;
         async function fetchData()
@@ -46,14 +45,11 @@ export default function GenreTabMovies()
         }
     }
 
-    // console.log(genrename())
-
     useEffect(() => {
         let ignore = false;
         async function fetchData()
         {
             const results = await genrename()
-            console.log(results)
             !ignore ? (setGenreName(results)) : 0
         }    
     fetchData();
@@ -78,7 +74,7 @@ export default function GenreTabMovies()
         })
 
 
-        return(<div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",alignContent:"center"}}><h1>{displayTitle}</h1><div style={{display:"flex",flexWrap: "wrap"}}>{topMMDBRatings}</div>
+        return(<div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",alignContent:"center",backgroundColor:"grey"}}><h1>{displayTitle}</h1><div style={{display:"flex",flexWrap: "wrap",justifyContent:"center"}}>{topMMDBRatings}</div>
         <div style={{display:"flex",flexDirection:"row",justifyContent:"center"}}>
         <button style={{width:"100px"}} onClick={handleClickPrev}>Prev Page</button>
         <button style={{width:"100px"}}onClick={handleClickNext}>Next Page</button>

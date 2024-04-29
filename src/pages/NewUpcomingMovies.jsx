@@ -21,10 +21,7 @@ export default function NewUpcomingMovies()
     return () => {ignore = true;};
     }, []);
 
-    // console.log(Math.floor(Math.random() * movies?.results?.length))
     const filteredMovies = movies?.results?.slice(0 ,5)
-
-    // console.log(filteredMovies?.slice(0,5))
 
     console.log(filteredMovies)
    

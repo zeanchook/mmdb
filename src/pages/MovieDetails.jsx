@@ -139,7 +139,7 @@ export default function MovieDetails({handleFavourite})
 
         
         function trailerDisplay(trailer) { 
-            console.log(trailer)
+
             if (trailer?.success === false || trailer?.results.length === 0)
             {
                 setOpenTrailer(false)
@@ -168,7 +168,7 @@ export default function MovieDetails({handleFavourite})
                 const url = `https://api.themoviedb.org/3/movie/${movieDetails?.imdb_id}/videos?&api_key=36d3acba2fb699efb449a8d506e9430a`;
                 const response = await fetch(url)
                 const myResults = await response.json();
-                console.log(myResults)
+
                 return myResults
                 }
             let trailer = await getTrailer()
@@ -199,10 +199,6 @@ export default function MovieDetails({handleFavourite})
         }
     }
 
-    
-
-    
-console.log(movieDetails)
     return (<>
     {/* {movieDetails} */}
     <div style={{display:"flex",alignItems:"center",backgroundImage:`url(https://image.tmdb.org/t/p/original${movieDetails.backdrop_path})`,backgroundSize:"cover",backgroundPosition:"center",minHeight: "100vh"}}>

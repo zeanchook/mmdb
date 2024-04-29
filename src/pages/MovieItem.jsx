@@ -16,7 +16,7 @@ export default function MovieItem({items,index,ratingsData})
     let movieRatings = ""
     if (index2 !== -1)
     {
-        movieRatings = "⭐️ :" + ratingsData[index2].fields.Rating
+        movieRatings = "⭐️ " + ratingsData[index2].fields.Rating
     }
 
     const [year, month, day] = items.release_date.split("-");

@@ -44,8 +44,7 @@ export default function GenreRec({getRecGenre}){
 
             if(previousIdx.includes(randomIdx))
             {
-                console.log(previousIdx.includes(randomIdx) === true)
-                console.log("here")
+    
                 randomIdx = Math.floor(Math.random() * resultLength);
                 previousIdx.push(randomIdx)
             }

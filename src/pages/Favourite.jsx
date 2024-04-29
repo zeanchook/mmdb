@@ -8,7 +8,6 @@ export default function Favourite()
 
     let filterRatings = ratingsData?.filter(x => (x.fields.Favourite) === "yes")
     
-
     const topMMDBRatings = filterRatings.map((x,idx)=>
         {
             return <div key={idx} className="movie-poster-container" style={{margin:"30px",display:"flex",flexWrap:"wrap"}} onClick={() => contextPassed[0](x.fields.MovieID)}>

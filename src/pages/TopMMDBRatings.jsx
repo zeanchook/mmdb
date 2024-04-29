@@ -6,7 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 export default function TopMMDBRatings({ratingsData})
 {
 
-    // console.log(ratingsData)
+
     let filterRatings = ratingsData?.filter(x => typeof(parseInt(x.fields.Rating)) === "number")
     filterRatings = filterRatings.filter(x => x.fields.Rating !== "-")
 
@@ -35,7 +35,7 @@ export default function TopMMDBRatings({ratingsData})
     })
 
     filterRatings = filterRatings.slice(0,5)
-    console.log(filterRatings)
+
 
     const topMMDBRatings = filterRatings.map((x,idx)=>
     {

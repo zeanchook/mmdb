@@ -16,7 +16,7 @@ export default function Recommendation()
         acc[x] = (acc[x] || 0) + 1;
         return acc;
     }, {});
-    console.log(getRecGenre)
+
     getRecGenre = Object.entries(getRecGenre).map(([genre, count]) => ({ genre, count }));
     getRecGenre = getRecGenre.sort((b,a) => 
     {
