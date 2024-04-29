@@ -6,37 +6,36 @@ export const DataContext = createContext();
 import "bootstrap/dist/css/bootstrap.css";
 
 // import './App.css'
-import MainPage from "./MainPage"
-import MovieDetails from "./MovieDetails"
+import MainPage from "./pages/MainPage"
+import MovieDetails from "./pages/MovieDetails"
 
-import TopRatedTab from "./TopRatedTab"
-import GenreTab from "./GenreTab"
-import GenreTabMovies from "./GenreTabMovies"
+import TopRatedTab from "./pages/TopRatedTab"
+import GenreTabMovies from "./pages/GenreTabMovies"
+import Recommendation from "./pages/Recommendation"
 
-import SearchResults from "./SearchResults"
-import Wishlist from "./Wishlist"
-import Favourite from "./Favourite"
-import NavBar from "./NavBar"
-import './test.css'
+import SearchResults from "./pages/SearchResults"
+import Wishlist from "./pages/Wishlist"
+import Favourite from "./pages/Favourite"
+import NavBar from "./pages/NavBar"
+import './cssStuff.css'
 import { Route, Routes } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
+import { getrecentsearch } from "./service/getrecentsearch-at-service"
+import { gettopratings } from "./service/gettopratings-at-service"
+import { patchtopratings } from "./service/patchtopratings-at-service"
+import { posttopratings } from "./service/posttopratings-at-service"
 
 function App() {
 
   const [ratingsData, setRatingsData] = useState([]);
-
   const [searchString, setsearchString] = useState("");
-
   const [searchResults,setSearchResults] = useState("");
-
-  // handle search ranking ONLY
   const [searchRanking,setSearchRanking] = useState([])
   const [recentSearch, setRecentSearch] = useState([]);
 
  const navigate = useNavigate();
   
-  // ! one
   const handleFavourite =(type,items,returnRatings,providerDetails) =>
   {
     let newData = ratingsData
@@ -101,7 +100,6 @@ function App() {
       backgroundImage: items.poster_path, Favourite: favourite,Genre: getGenre,
       WishList: wishlist,Provider: provider}},
     ...newData]
-    console.log(newdata3)
     setRatingsData(newdata3)
     }
   }
@@ -109,120 +107,65 @@ function App() {
   const updateRating = () =>
   {
     async function createRatings(fields) {
-    console.log("inside",fields.Provider)
-    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/`;
-    const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-    const headers = {
-      'Authorization': `Bearer ${authToken}`,
-      'Content-Type': 'application/json'
-    }
-    const data = {
-      fields:
-      {
-      MovieName: fields?.MovieName,
-      MovieID: JSON.stringify(fields?.MovieID),
-      Rating: fields?.Rating,
-      backgroundImage: fields?.backgroundImage,
-      Favourite: fields?.Favourite,
-      Genre: fields?.Genre,
-      WishList: fields?.WishList,
-      Provider: fields?.Provider
-      }
-    };
-    const response = await fetch(url, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(data),})
-    const myRatings = await response.json();
-    console.log("thisone !!!!:",myRatings)
-
+    const myRatings = await posttopratings(fields);
+    console.log(myRatings)
     let finder = ratingsData.findIndex(x => parseInt(x.fields.MovieID) === parseInt(myRatings.fields.MovieID))
     setRatingsData([{...myRatings}, ...ratingsData.slice(0, finder), ...ratingsData.slice(finder + 1)])
-  }
-
-
-    async function updateRatings(x) {
-    const url = `https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings/${x.id}`;
-    const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-    const headers = {
-      'Authorization': `Bearer ${authToken}`,
-      'Content-Type': 'application/json'
     }
-    const data = {
-      fields:
-      {
-      Rating: x.fields?.Rating,
-      Favourite: x.fields?.Favourite,
-      WishList: x.fields?.WishList,
-      Provider: x.fields?.Provider
-      }
-    };
-    const response = await fetch(url, {
-            method: "PATCH",
-            headers: headers,
-            body: JSON.stringify(data),})
-    const myRatings = await response.json();
-  }
-
-  ratingsData.forEach(x => 
+  
+  ratingsData.forEach(items => 
     {
-      if(x.id === "new")
+      if(items.id === "new")
       {
-          createRatings(x.fields);
+          createRatings(items.fields);
       }
-      else if(x.fields.ratingsChanged?.change === "yes")
+      else if(items.fields.ratingsChanged?.change === "yes")
       {
-            updateRatings(x)
+        patchtopratings(items)
       }
-      else if(x.fields.favouriteChanged?.change === "yes")
+      else if(items.fields.favouriteChanged?.change === "yes")
       {
-            updateRatings(x)
+        patchtopratings(items)
       }
-      else if(x.fields.wishlistChanged?.change === "yes")
+      else if(items.fields.wishlistChanged?.change === "yes")
       {
-            updateRatings(x)
+        patchtopratings(items)
       }
     })
 
 }
 
-  // ! get first data airtable for Recent Search
   useEffect(() => {
-    async function mmdbRatingstable() {
-      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/Top%20MMDB%20Ratings";
-      const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-      const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-      }
-      const response = await fetch(url,
-        {headers: headers});
-      const reponseData = await response.json();
-      setRatingsData(reponseData?.records)
+    async function fetchratingsData()
+    {
+      const results = await gettopratings();
+      setRatingsData(results?.records)
     }
-    mmdbRatingstable();
+    async function fetchRecentSearch()
+    {
+      const results = await getrecentsearch();
+      setRecentSearch(results?.records)
+    }
+    fetchRecentSearch();
+    fetchratingsData();
   }, []);
 
   useEffect(() => {updateRating()}, [ratingsData]);
 
   const handlePress = (searchQuery) =>
-{
-  
-    setSearchResults(searchQuery);
-    
-}
+  {
+      setSearchResults(searchQuery);  
+  }
   
 const handleSearch = (searchValue) =>
 {
-  
     let searchString = searchValue.replace(" ","%20")
     if(searchString.length !== 0 )
     {
     setsearchString(searchString)
-    navigate("/movieresults")
+    navigate("/searchresults")
 
 
-    // !handle ranking search 
     const updateSearchRanking = (searchString) => {
         const existingMovieIndex = searchRanking.findIndex(item => item.name === searchString);
         let inside = "";
@@ -236,11 +179,9 @@ const handleSearch = (searchValue) =>
         }
         inside !== "" ? setSearchRanking(inside) : 0;
     };
-    // !handle ranking search ends
 
-    // !handle recent search 
+
     const updateRecentSearch = (searchString) => {
-       
         const newData2 = recentSearch.sort( (a,b) => 
         {
             if(a.fields.Name > b.fields.Name) 
@@ -253,7 +194,6 @@ const handleSearch = (searchValue) =>
             }
             return 0;
         })
-        console.log(newData2)
         let index = newData2.findIndex(item => item.fields.Name === '1');
         let existIdx = newData2.findIndex(item => item.fields.SearchName === searchString);
         if(existIdx === -1)
@@ -267,53 +207,30 @@ const handleSearch = (searchValue) =>
       }
         setRecentSearch(newData2)
     };
-    // !handle recent search 
     updateSearchRanking(searchString);
     updateRecentSearch(searchString)
   }
 }
-
-  // get first data airtable for Recent Search
-  useEffect(() => {
-    async function recentSearchTable() {
-      const url = "https://api.airtable.com/v0/app6jeHx0D6EIgyYt/RecentSearch";
-      const authToken = "patX97ZQi3d2FkxuA.8bfb13d450ef30d9b34d0d6367bdbcd8b987f24dfdf16a4d628b0b052729daad"
-      const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-      }
-      const response = await fetch(url,
-        {headers: headers});
-      const reponseData = await response.json();
-    //   setRecentSearchdata(reponseData);
-      setRecentSearch(reponseData?.records);
-    }
-    recentSearchTable();
-  }, []);
 
   const handleMovDetails = (id) =>
   {
       navigate("/movieresults/"+id);
   }
 
-
-
   return (
     <>
     <DataContext.Provider value={[handleMovDetails,ratingsData]}>
     <NavBar handleSearch={handleSearch} 
-        searchString={searchString} handlePress={handlePress}/>
+        searchString={searchString} handlePress={handlePress} recentSearch={recentSearch}/>
 
     <Routes>
-          <Route path="/" element={<MainPage  recentSearch={recentSearch} handleSearch={handleSearch}/>} />
+          <Route path="/" element={<MainPage />} />
           <Route path="/toprated" element={<TopRatedTab />} />
-          {/* <Route path="/genre" element={<GenreTab />} /> */}
           <Route path="/genre/:id" element={<GenreTabMovies />} />
           <Route path="/favourite" element={<Favourite ratingsData={ratingsData}/>} />
           <Route path="/wishlist" element={<Wishlist />} />
-
-          <Route path="/movieresults" element={<SearchResults searchResults={searchResults}/>} />
-
+          <Route path="/recommendation" element={<Recommendation />} />
+          <Route path="/searchresults" element={<SearchResults searchResults={searchResults}/>} />
           <Route path="/movieresults/:id" element={<MovieDetails handleFavourite={handleFavourite}/>} />
     </Routes>
     </DataContext.Provider>

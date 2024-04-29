@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link} from "react-router-dom";
 
-import { listgenres } from "./service/genre-service"
+import { listgenres } from "../service/genre-service"
 
 
 export default function GenreTab()
@@ -31,7 +31,7 @@ export default function GenreTab()
             return 0;
         }
     })
-    console.log(test)
+    // console.log(test)
 
     const genreList = genreTab?.records?.map(x=>
         {

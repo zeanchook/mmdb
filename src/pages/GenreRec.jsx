@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { useContext } from "react";
-import { DataContext } from "./App";
+import { DataContext } from "../App";
 
-import { discovergenre } from "./service/genrerecommend-service"
+import { discovergenre } from "../service/genrerecommend-service"
 
 import Spinner from 'react-bootstrap/Spinner';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-
 
 
 export default function GenreRec({getRecGenre}){
@@ -31,18 +30,34 @@ export default function GenreRec({getRecGenre}){
             setGenreData(results)
             setStatus("done");
         }
-        }    
+        } 
+           
     fetchData();
     return () => {ignore = true;};
     }, [getRecGenre]);
+    let previousIdx = [];
 
     let recDisplay = genreData[0]?.results?.map((x,idx) => 
         {
             const resultLength = genreData[0]?.results.length
             let randomIdx = Math.floor(Math.random() * resultLength);
 
+            if(previousIdx.includes(randomIdx))
+            {
+                console.log(previousIdx.includes(randomIdx) === true)
+                console.log("here")
+                randomIdx = Math.floor(Math.random() * resultLength);
+                previousIdx.push(randomIdx)
+            }
+            else{
+                previousIdx.push(randomIdx)
+            }
+          
+
             return (<div key={idx} className="movie-poster-container" onClick={() => contextPassed[0](genreData[0].results[randomIdx].id)}>
-            <img src={`https://image.tmdb.org/t/p/w500${genreData[0].results[randomIdx].poster_path}`} ></img></div>)
+            <img src={`https://image.tmdb.org/t/p/w500${genreData[0].results[randomIdx].poster_path}`} ></img>
+            <div className="movie-title">{genreData[0].results[randomIdx].original_title}</div>            
+            </div>)
         })
 
         recDisplay = recDisplay?.slice(0,5)
@@ -63,7 +78,7 @@ export default function GenreRec({getRecGenre}){
     </Spinner> : 
     recLength === 0 ? "No recommended movie at the moment" :
     <div style={{display:"flex",alignContent:"center",justifyContent:"center",flexDirection:"column"}}>
-        <div style={{textAlign:"center"}}>Because you like {returnRecords} So figured you might like these too !</div>
+        <div style={{textAlign:"center"}}><h2>Because you like {returnRecords?.join(",")}. So we figured that you might like these too !</h2></div>
         <div style={{display:"flex",alignContent:"center",justifyContent:"center"}}>{recDisplay}</div>
         </div>}
     </div>

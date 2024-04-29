@@ -1,5 +1,5 @@
 import { useContext,useState,useEffect } from "react";
-import { DataContext } from "./App";
+import { DataContext } from "../App";
 
 export default function TopRatedTab()
 {
@@ -33,7 +33,7 @@ export default function TopRatedTab()
     useEffect(() => {
         const topMMDBRatings = filterRatings.map((x,idx)=>
         {
-            return <div key={idx} className="movie-poster-container" onClick={() => contextPassed[0](x.fields.MovieID)}>
+            return <div key={idx} className="movie-poster-container" style={{margin:"30px",display:"flex",flexWrap:"wrap"}}onClick={() => contextPassed[0](x.fields.MovieID)}>
             <img src={`https://image.tmdb.org/t/p/w500${x.fields.backgroundImage}`} ></img><a>{x.fields.MovieName}</a><a>⭐️ {x.fields.Rating}</a></div>
         })
         setTabDisplay(topMMDBRatings);
@@ -42,5 +42,6 @@ export default function TopRatedTab()
 
     
 
-    return(<>{tabDisplay}</>)
+    return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"orange"}}>
+        <h1>Top Rated</h1><div style={{display:"flex",flexWrap:"wrap",justifyContent:"center"}}>{tabDisplay}</div></div>)
 }

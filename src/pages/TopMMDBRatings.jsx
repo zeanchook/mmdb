@@ -35,11 +35,14 @@ export default function TopMMDBRatings({ratingsData})
     })
 
     filterRatings = filterRatings.slice(0,5)
+    console.log(filterRatings)
 
     const topMMDBRatings = filterRatings.map((x,idx)=>
     {
         return <div key={idx} className="movie-poster-container" onClick={() => handleMovDetails(x.fields.MovieID)}>
-            <img src={`https://image.tmdb.org/t/p/w500${x.fields.backgroundImage}`} ></img><a>⭐️ {x.fields.Rating}</a></div>
+            <img src={`https://image.tmdb.org/t/p/w500${x.fields.backgroundImage}`} ></img>
+            <div className="movie-title">{x.fields.MovieName}</div>            
+            <a>⭐️ {x.fields.Rating}</a></div>
     })
 
     // topMMDBRatings.length === 0
@@ -49,7 +52,7 @@ export default function TopMMDBRatings({ratingsData})
       </Spinner> : 
       topMMDBRatings.length === 0 ? "No recommended movie at the moment" :
         <div style={{display:"flex",alignContent:"center",justifyContent:"center",flexDirection:"column"}}>
-            <div style={{textAlign:"center"}}>New Upcoming Movies:</div>
+            <div style={{textAlign:"center"}}><h2>MMDB Top Rated:</h2></div>
             <div style={{display:"flex",alignContent:"center",justifyContent:"center"}}>{topMMDBRatings}</div>
         </div>}
         </div>)

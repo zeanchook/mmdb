@@ -1,19 +1,13 @@
-/* eslint-disable react/prop-types */
-
-
-import RecentSearch from "./RecentSearch"
 import TopMMDBRatings from "./TopMMDBRatings"
 import GenreRec from "./GenreRec"; 
 import NewUpcomingMovies from "./NewUpcomingMovies"
 import { useContext } from "react";
-import { DataContext } from "./App";
+import { DataContext } from "../App";
 
-
-export default function MainPage({recentSearch,handleSearch})
+export default function Recommendation()
 {
     const contextPassed = useContext(DataContext);
     const ratingsData = contextPassed[1];
-    // !! Handling genre
 
     // eslint-disable-next-line react/prop-types
     let getRecGenre = (ratingsData.map(x=>x.fields.Genre)).join(",").split(",")
@@ -39,25 +33,12 @@ export default function MainPage({recentSearch,handleSearch})
        }
     }
     )
-  
-
-
-    // !! Handling genre
-
-    return(
-    <>
-        <div className="app-container">
-            <div><RecentSearch recentSearch={recentSearch} handleSearch={handleSearch}/></div> 
-        </div>
-        
-        <NewUpcomingMovies />
-        <TopMMDBRatings ratingsData={ratingsData}/>
-        <GenreRec getRecGenre={getRecGenre} />
     
-        
-    
-    </>);
+    return(<div style={{background:"yellow"}}>
+    <GenreRec getRecGenre={getRecGenre} />
+    <hr />
+    <TopMMDBRatings ratingsData={ratingsData}/>
+    <hr />
+    <NewUpcomingMovies />
+    <hr /></div>)
 }
-
-
-

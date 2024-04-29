@@ -1,19 +1,21 @@
 import { useParams } from "react-router-dom";
 import { useEffect,useState } from "react"
 
-import { getMovies } from "./service/genremovies-service"
+
+import { genrename } from "../service/genrename-service"
+import { getMovies } from "../service/genremovies-service"
 
 import { useContext } from "react";
-import { DataContext } from "./App";
+import { DataContext } from "../App";
 
 
 export default function GenreTabMovies()
 {
-
     const contextPassed = useContext(DataContext);
 
     const [genreMovie, setGenreMovies] = useState("")
-    const [pageState, setPage] = useState(1)
+    const [pageState, setPage] = useState(1) 
+    const [genreName, setGenreName] = useState("")
     const { id } = useParams();
 
     console.log(id)
@@ -26,7 +28,7 @@ export default function GenreTabMovies()
         }    
     fetchData();
     return () => {ignore = true;};
-    }, [id]);
+    }, [pageState,id]);
 
     const handleClickNext = () =>
     {
@@ -43,7 +45,28 @@ export default function GenreTabMovies()
         setPage(pageState - 1)
         }
     }
-    
+
+    // console.log(genrename())
+
+    useEffect(() => {
+        let ignore = false;
+        async function fetchData()
+        {
+            const results = await genrename()
+            console.log(results)
+            !ignore ? (setGenreName(results)) : 0
+        }    
+    fetchData();
+    return () => {ignore = true;};
+    }, []);
+
+    let displayTitle = ""
+    if(genreName)
+    {
+        let finderName = genreName?.records?.findIndex(x=> parseInt(x.fields.id) === parseInt(id))
+        displayTitle = genreName?.records[finderName]?.fields.name
+    }
+
 
     const topMMDBRatings = genreMovie?.results?.map((x,idx)=>
         {
@@ -55,8 +78,11 @@ export default function GenreTabMovies()
         })
 
 
-        return(<><div>New Upcoming Movies: </div><div style={{display:"flex",flexWrap: "wrap"}}>{topMMDBRatings}</div><button onClick={handleClickNext}>Next Page</button>
-        <button onClick={handleClickPrev}>Prev Page</button>
-        </>)
+        return(<div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",alignContent:"center"}}><h1>{displayTitle}</h1><div style={{display:"flex",flexWrap: "wrap"}}>{topMMDBRatings}</div>
+        <div style={{display:"flex",flexDirection:"row",justifyContent:"center"}}>
+        <button style={{width:"100px"}} onClick={handleClickPrev}>Prev Page</button>
+        <button style={{width:"100px"}}onClick={handleClickNext}>Next Page</button>
+        </div>
+        </div>)
 
 }

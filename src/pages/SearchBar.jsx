@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.css";
-
-
+import Button from 'react-bootstrap/Button';
 
 // eslint-disable-next-line react-refresh/only-export-components, react/display-name
 export default function({ handleSearch,searchString,handlePress })
@@ -32,13 +31,12 @@ export default function({ handleSearch,searchString,handlePress })
         handlePress(myResults);
         }
         searchString !== "" ? searchMovies() : null
-        console.log("no run?",searchString)
     }, [searchString]);
 
     return(
-        <div className="d-flex">
-        <input type="search" id="search" placeholder="Search for a movie" onChange={handleChange}/>
-        <button onClick={()=>handleSearch(searchValue)}>Search</button></div>
+        <div className="d-flex" style={{display:"flex"}}>
+        <input type="search" id="search" placeholder="Search..." style={{borderRadius:"10px",fontSize:"10px",backgroundColor:"white"}}onChange={handleChange}/>
+        <Button variant="success" onClick={()=>handleSearch(searchValue)} style={{borderRadius:"10px",marginLeft:"5px"}}>Search</Button></div>
     )
 
 }

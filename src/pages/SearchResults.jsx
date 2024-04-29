@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import MovieItem from "./MovieItem"
 import { useContext } from "react";
-import { DataContext } from "./App";
+import { DataContext } from "../App";
 
 
 export default function SearchResults({searchResults})
@@ -14,7 +14,9 @@ export default function SearchResults({searchResults})
         return (<MovieItem items={items} index={index} key={index} ratingsData={ratingsData}/>);
     })
 
-    return(<div style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}>
-    {resultsArr}    
+    
+
+    return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",backgroundColor:"grey",height:"100%",width:"100%",position:"absolute",top:"0px",zIndex:"-1"}}>
+    <h2>Search Results</h2><div style={{display:"flex",flexWrap:"wrap",margin:"30px"}}>{resultsArr}</div>
 </div>)
 }
