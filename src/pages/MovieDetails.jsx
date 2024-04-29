@@ -34,15 +34,16 @@ export default function MovieDetails({handleFavourite})
 
   
     
-    const handleRateClick = () =>
+    const handleRateClick = (event) =>
     {
         rateDisplay === "none" ? setRateDisplay("") : setRateDisplay("none")
+        handleFavourite(event.target.name,movieDetails,ratingsVal,providerAvail)
     }
 
     const handleChange = (event) =>
     {
         setRatingsVal(event.target.value)
-        handleFavourite(event.target.name,movieDetails,event.target.value,providerAvail)
+        // handleFavourite(event.target.name,movieDetails,event.target.value,providerAvail)
         // setRateDisplay("none")
     }
 
@@ -177,7 +178,8 @@ export default function MovieDetails({handleFavourite})
     
     const ratings = () =>
     {
-        return(<input name="rating" type="range" max="10" min="0" step="0.1" value={ratingsVal} onChange={handleChange}></input>)
+        return(<input name="rating" type="range" max="10" min="0" step="0.1" label="1" value={ratingsVal} onChange={handleChange}></input>
+        )
     }
 
     const genres = movieDetails?.genres?.map((x,idx) => 
@@ -232,7 +234,7 @@ export default function MovieDetails({handleFavourite})
 
         <div style={{display:"flex",alignItems:"center"}}>
         <div style={{display:rateDisplay,marginLeft:"10px"}}>{ratings()}</div>
-        <button name="rating" className="button-78" style={{marginLeft:"10px",marginRight:"20px"}} onClick={handleRateClick}>Rate</button>
+        <button name="rating" className="button-78" style={{marginLeft:"10px",marginRight:"20px"}} onClick={handleRateClick}>Rate:{ratingsVal}</button>
         <div className="movie-buttons" > 
             <div><button onClick={handleTrailerClick} className="button-73">Watch Trailer</button> 
             
