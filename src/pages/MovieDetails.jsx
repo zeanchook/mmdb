@@ -238,7 +238,6 @@ export default function MovieDetails({handleFavourite})
         <div className="movie-buttons" > 
             <div><button onClick={handleTrailerClick} className="button-73">Watch Trailer</button> 
             
-                
             {trailerDisplayStatus === true ? <ModalVideo 
                 chanel="youtube"
                 allowFullScreen={false}
