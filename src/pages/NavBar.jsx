@@ -45,10 +45,10 @@ export default function NavBar({handleSearch,setSearch,searchString,handlePress,
         }
     })
 
-    const genreList = genreTabSorted?.map(x=>
+    const genreList = genreTabSorted?.map((x,idx)=>
         {
             // eslint-disable-next-line react/jsx-key
-            return(<div ><Link to={`/genre/${x?.fields?.id}`}  style={{ textDecoration: 'none',color:"white" }} name={x?.fields?.id}>{x?.fields?.name}</Link></div>)
+            return(<div key={idx}><Link to={`/genre/${x?.fields?.id}`}  style={{ textDecoration: 'none',color:"white" }} name={x?.fields?.id}>{x?.fields?.name}</Link></div>)
         })
 
 
