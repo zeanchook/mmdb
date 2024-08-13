@@ -12,7 +12,7 @@ export const recentSearchRedux = (state = initState, action) => {
     
   switch (action.type) {
     case "UPDATE_POST": {
-      const item = action.searchString;
+      const match = action.searchString;
         
       const { result } = state;
       const newData2 = result.records.sort(
@@ -20,14 +20,14 @@ export const recentSearchRedux = (state = initState, action) => {
       );
       let index = newData2.findIndex((item) => item.fields.Name === "1");
       let existIdx = newData2.findIndex(
-        (item) => item.fields.SearchName === item
+        (item) => item.fields.SearchName === match
       );
       if (existIdx === -1) {
         if (index !== -1) {
           for (let i = newData2.length - 1; i > 0; i--) {
             newData2[i].fields.SearchName = newData2[i - 1].fields.SearchName;
           }
-          newData2[index].fields.SearchName = item;
+          newData2[index].fields.SearchName = match;
         }
       }
       console.log(newData2)
