@@ -8,10 +8,10 @@ import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import rootReducer from './reducer/rootReducer.js';
 import logger from 'redux-logger';
-import { composeWithDevTools } from "@redux-devtools/extension";
+// import { composeWithDevTools } from "@redux-devtools/extension";
 
 
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger)));
+const store = createStore(rootReducer, applyMiddleware(logger));
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
