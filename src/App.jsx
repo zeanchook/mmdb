@@ -26,7 +26,7 @@ import { patchtopratings } from "./service/patchtopratings-at-service";
 import { posttopratings } from "./service/posttopratings-at-service";
 
 function App() {
-  const [ratingsData, setRatingsData] = useState([]);
+  const [ratingsData2, setRatingsData] = useState([]);
   const [searchString, setsearchString] = useState("");
   const [searchResults, setSearchResults] = useState("");
   const [searchRanking, setSearchRanking] = useState([]);
@@ -36,115 +36,32 @@ function App() {
   const recentSearch = useSelector(state => state?.recentSearch.result?.records)
   const dispatch = useDispatch();
 
+  const ratingsData = useSelector(state => state?.handleData.result?.records)
+  console.log(ratingsData)
+
   const handleFavourite = (type, items, returnRatings, providerDetails) => {
-    let newData = ratingsData;
-    let finder = newData.findIndex(
-      (x) => parseInt(x.fields.MovieID) === items.id
-    );
-    let favourite, wishlist, rating;
 
-    if (finder !== -1) {
-      favourite = ratingsData[finder].fields?.Favourite;
-      wishlist = ratingsData[finder].fields?.WishList;
-      rating = ratingsData[finder].fields?.Rating;
-    }
+    dispatch({
+      type: "UPDATE_DATA",
+      payload: {
+        type: type,
+        items: items,
+        returnRatings: returnRatings,
+        providerDetails: providerDetails,
+      },
+    });
 
-    let favouriteChanged = { change: "no" };
-    let wishlistChanged = { change: "no" };
-    let ratingsChanged = { change: "no" };
-    let provider = providerDetails;
-
-    switch (type) {
-      case "favourite":
-        finder !== -1
-          ? (newData[finder].fields?.Favourite === "no"
-              ? (favourite = "yes")
-              : (favourite = "no"),
-            (favouriteChanged = { change: "yes" }))
-          : ((favourite = "yes"), (rating = "-"), (wishlist = "no"));
-        break;
-      case "wishlist":
-        finder !== -1
-          ? (newData[finder].fields?.WishList === "no"
-              ? (wishlist = "yes")
-              : (wishlist = "no"),
-            (wishlistChanged = { change: "yes" }))
-          : ((wishlist = "yes"), (rating = "-"), (favourite = "no"));
-        break;
-      case "rating":
-        finder !== -1
-          ? newData[finder].fields.Rating !== returnRatings
-            ? ((ratingsChanged = { change: "yes" }), (rating = returnRatings))
-            : rating
-          : ((rating = returnRatings), (wishlist = "no"), (favourite = "no"));
-        break;
-    }
-
-    const getGenre = items.genres.map((items) => items.id).join(",");
-
-    if (finder !== -1) {
-      let newData2 = [
-        {
-          id: newData[finder].id,
-          createdTime: newData[finder].createdTime,
-          fields: {
-            MovieName: items.title,
-            MovieID: items.id,
-            Rating: rating,
-            ratingsChanged,
-            backgroundImage: items.poster_path,
-            Favourite: favourite,
-            favouriteChanged,
-            Genre: getGenre,
-            WishList: wishlist,
-            wishlistChanged,
-            Provider: provider,
-          },
-        },
-        ...newData.slice(0, finder),
-        ...newData.slice(finder + 1),
-      ];
-      console.log(newData2);
-      setRatingsData(newData2);
-    } else {
-      let newdata3 = [
-        {
-          id: "new",
-          createdTime: "newtime",
-          fields: {
-            MovieName: items.title,
-            MovieID: items.id,
-            Rating: rating,
-            ratingsChanged,
-            backgroundImage: items.poster_path,
-            Favourite: favourite,
-            Genre: getGenre,
-            WishList: wishlist,
-            Provider: provider,
-          },
-        },
-        ...newData,
-      ];
-      setRatingsData(newdata3);
-    }
-  };
+};
 
   const updateRating = () => {
     async function createRatings(fields) {
       const myRatings = await posttopratings(fields);
-      console.log(myRatings);
-      let finder = ratingsData.findIndex(
-        (x) => parseInt(x.fields.MovieID) === parseInt(myRatings.fields.MovieID)
-      );
-      setRatingsData([
-        { ...myRatings },
-        ...ratingsData.slice(0, finder),
-        ...ratingsData.slice(finder + 1),
-      ]);
+      console.log(dispatch({type: "CREATE_DATA", myRatings}))
     }
 
     ratingsData.forEach((items) => {
       if (items.id === "new") {
+        console.log("here?")
         createRatings(items.fields);
       } else if (items.fields.ratingsChanged?.change === "yes") {
         patchtopratings(items);
@@ -156,14 +73,13 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    async function fetchratingsData() {
-      const results = await gettopratings();
-      setRatingsData(results?.records);
-    }
-   
-    fetchratingsData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchratingsData() {
+  //     const results = await gettopratings();
+  //     setRatingsData(results?.records);
+  //   }
+  //   fetchratingsData();
+  // }, []);
 
   useEffect(() => {
     updateRating();

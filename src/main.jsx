@@ -9,6 +9,9 @@ import { Provider } from 'react-redux'
 import rootReducer from './reducer/rootReducer.js';
 import logger from 'redux-logger';
 // import { composeWithDevTools } from "@redux-devtools/extension";
+import { Analytics } from "@vercel/analytics/react"
+
+
 
 
 const store = createStore(rootReducer, applyMiddleware(logger));

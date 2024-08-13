@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import { getrecentsearch } from "../service/getrecentsearch-at-service";
+import { handleDataRedux } from "./handleDataReducer";
 
 const result = await getrecentsearch();
 console.log("result", result);
@@ -8,12 +9,14 @@ const initState = {
   result: result ? result : [],
 };
 
+
+
 export const recentSearchRedux = (state = initState, action) => {
     
   switch (action.type) {
     case "UPDATE_POST": {
       const match = action.searchString;
-        
+        console.log("here also")
       const { result } = state;
       const newData2 = result.records.sort(
         (a, b) => a.fields.Name - b.fields.Name
@@ -38,9 +41,12 @@ export const recentSearchRedux = (state = initState, action) => {
   }
 };
 
+
+
 const rootReducer = combineReducers(
     {
         recentSearch : recentSearchRedux,
+        handleData : handleDataRedux
     }
 )
 
