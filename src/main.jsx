@@ -4,11 +4,14 @@ import App from './App.jsx'
 // import './index.css'
 import { BrowserRouter } from "react-router-dom";
 
-import { createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 import rootReducer from './reducer/rootReducer.js';
+import logger from 'redux-logger';
+import { composeWithDevTools } from "@redux-devtools/extension";
 
-const store = createStore(rootReducer);
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger)));
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

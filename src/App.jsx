@@ -4,7 +4,7 @@ import { createContext } from "react";
 export const DataContext = createContext();
 
 import "bootstrap/dist/css/bootstrap.css";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import MainPage from "./pages/MainPage";
 import MovieDetails from "./pages/MovieDetails";
@@ -21,26 +21,21 @@ import "./cssStuff.css";
 import { Route, Routes } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
-import { getrecentsearch } from "./service/getrecentsearch-at-service";
 import { gettopratings } from "./service/gettopratings-at-service";
 import { patchtopratings } from "./service/patchtopratings-at-service";
 import { posttopratings } from "./service/posttopratings-at-service";
-import RecentSearch from "./pages/RecentSearch";
 
-function App(myReducer) {
+function App() {
   const [ratingsData, setRatingsData] = useState([]);
   const [searchString, setsearchString] = useState("");
   const [searchResults, setSearchResults] = useState("");
   const [searchRanking, setSearchRanking] = useState([]);
 
   const navigate = useNavigate();
-  const { updateSearch,result } = myReducer;
-  console.log(myReducer,result);
 
-  //***/
-  const [recentSearch, setRecentSearch] = useState(result);
+  const recentSearch = useSelector(state => state?.recentSearch.result?.records)
+  const dispatch = useDispatch();
 
-  console.log(mapStateToProps.state);
   const handleFavourite = (type, items, returnRatings, providerDetails) => {
     let newData = ratingsData;
     let finder = newData.findIndex(
@@ -166,12 +161,7 @@ function App(myReducer) {
       const results = await gettopratings();
       setRatingsData(results?.records);
     }
-    async function fetchRecentSearch() {
-      const results = await getrecentsearch();
-      console.log(results?.records);
-      setRecentSearch(results?.records);
-    }
-    fetchRecentSearch();
+   
     fetchratingsData();
   }, []);
 
@@ -205,9 +195,7 @@ function App(myReducer) {
       };
 
       const updateRecentSearch = (searchString) => {
-        const result = updateSearch({recentSearch: recentSearch,searchString: searchString})
-        const { item } = result;
-        setRecentSearch(item.recentSearch);
+        dispatch({type: 'UPDATE_POST',searchString})
       };
       updateSearchRanking(searchString);
       updateRecentSearch(searchString);
@@ -252,17 +240,4 @@ function App(myReducer) {
   );
 }
 
-const mapStateToProps = (state) => {
-  console.log(state?.result?.records);
-  return {
-    result: state?.result?.records,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateSearch: (item) => dispatch({type: 'UPDATE_POST',item})
-  }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(App);
+export default (App);
