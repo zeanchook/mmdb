@@ -9,7 +9,6 @@ const initRatingsState = {
 export const handleDataRedux = (state = initRatingsState, action) => {
   const { result } = state;
   const ratingsData = result.records;
-console.log(action)
   switch (action.type) {
     case "UPDATE_DATA": {
       const { payload } = action;

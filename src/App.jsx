@@ -21,12 +21,12 @@ import "./cssStuff.css";
 import { Route, Routes } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
-import { gettopratings } from "./service/gettopratings-at-service";
 import { patchtopratings } from "./service/patchtopratings-at-service";
 import { posttopratings } from "./service/posttopratings-at-service";
+import { gettopratings } from "./service/gettopratings-at-service";
 
 function App() {
-  const [ratingsData2, setRatingsData] = useState([]);
+  // const [ratingsData2, setRatingsData] = useState([]);
   const [searchString, setsearchString] = useState("");
   const [searchResults, setSearchResults] = useState("");
   const [searchRanking, setSearchRanking] = useState([]);
@@ -53,36 +53,29 @@ function App() {
 
 };
 
-  const updateRating = () => {
-    async function createRatings(fields) {
-      const myRatings = await posttopratings(fields);
-      console.log(dispatch({type: "CREATE_DATA", myRatings}))
-    }
-
-    ratingsData.forEach((items) => {
-      if (items.id === "new") {
-        console.log("here?")
-        createRatings(items.fields);
-      } else if (items.fields.ratingsChanged?.change === "yes") {
-        patchtopratings(items);
-      } else if (items.fields.favouriteChanged?.change === "yes") {
-        patchtopratings(items);
-      } else if (items.fields.wishlistChanged?.change === "yes") {
-        patchtopratings(items);
-      }
-    });
-  };
-
-  // useEffect(() => {
-  //   async function fetchratingsData() {
-  //     const results = await gettopratings();
-  //     setRatingsData(results?.records);
-  //   }
-  //   fetchratingsData();
-  // }, []);
-
   useEffect(() => {
+    const updateRating = () => {
+      async function createRatings(fields) {
+        const myRatings = await posttopratings(fields);
+        dispatch({type: "CREATE_DATA", myRatings})
+        console.log(ratingsData)
+      }
+  
+      ratingsData.forEach((items) => {
+        if (items.id === "new") {
+          console.log("here?")
+          createRatings(items.fields);
+        } else if (items.fields.ratingsChanged?.change === "yes") {
+          patchtopratings(items);
+        } else if (items.fields.favouriteChanged?.change === "yes") {
+          patchtopratings(items);
+        } else if (items.fields.wishlistChanged?.change === "yes") {
+          patchtopratings(items);
+        }
+      });
+    };
     updateRating();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratingsData]);
 
   const handlePress = (searchQuery) => {
